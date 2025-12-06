@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vansham - Portfolio Ecosystem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-main: #111111;
+            --text-muted: #666666;
+            --card-bg: #f9f9f9;
+            --border-color: #e5e5e5;
+            --accent-black: #000000;
+            
+            /* Role Colors */
+            --color-designer: #000000;
+            --color-community: #2563eb;
+            --color-mentor: #ca8a04;
+            --color-speaker: #dc2626;
+        }
+        
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-y: auto;   /* Allow vertical scroll */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            letter-spacing: -0.015em;
+        }
+
+        /* --- UTILITIES & ANIMATIONS --- */
+        .hide { display: none !important; }
+        
+        .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .fade-out { animation: fadeOut 0.4s ease-in forwards; pointer-events: none; }
+        .blink-select { animation: blink 0.1s infinite; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.98); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; filter: invert(1); }
+            50% { opacity: 0.8; filter: invert(0); }
+        }
+
+        /* --- LANDING PAGE (Game Style) --- */
+        #landing-page {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background-color: #f8f8f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto; /* Allow scrolling on small screens if needed */
+        }
+
+        /* Animated Grid Background */
+        .retro-grid {
+            position: absolute;
+            top: -50%; left: -50%; 
+            width: 200%;
+            height: 200%;
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+            animation: gridMove 20s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes gridMove {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0) translateZ(-200px); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(40px) translateZ(-200px); }
+        }
+
+        /* CRT Scanline Overlay */
+        .crt-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.03) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .pixel-font {
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .persona-card {
+            background: white;
+            border: 3px solid #e5e5e5;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        /* Role-Based Hover Effects - Icon Backgrounds */
+        .icon-wrapper { transition: background-color 0.3s ease, border-color 0.3s ease; }
+
+        .persona-card[data-role="designer"]:hover { border-color: var(--color-designer); box-shadow: 0 10px 0 var(--color-designer); transform: translateY(-10px); }
+        .persona-card[data-role="designer"]:hover .icon-wrapper { background-color: rgba(0,0,0,0.08); border-color: var(--color-designer); }
+        
+        .persona-card[data-role="community"]:hover { border-color: var(--color-community); box-shadow: 0 10px 0 var(--color-community); transform: translateY(-10px); }
+        .persona-card[data-role="community"]:hover .icon-wrapper { background-color: rgba(37, 99, 235, 0.1); border-color: var(--color-community); }
+
+        .persona-card[data-role="mentor"]:hover { border-color: var(--color-mentor); box-shadow: 0 10px 0 var(--color-mentor); transform: translateY(-10px); }
+        .persona-card[data-role="mentor"]:hover .icon-wrapper { background-color: rgba(202, 138, 4, 0.1); border-color: var(--color-mentor); }
+
+        .persona-card[data-role="speaker"]:hover { border-color: var(--color-speaker); box-shadow: 0 10px 0 var(--color-speaker); transform: translateY(-10px); }
+        .persona-card[data-role="speaker"]:hover .icon-wrapper { background-color: rgba(220, 38, 38, 0.1); border-color: var(--color-speaker); }
+
+        .game-select-text {
+            font-family: 'JetBrains Mono', monospace;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
+        }
+        .persona-card:hover .game-select-text {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* P1 Indicator */
+        .p1-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            color: black;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .persona-card:hover .p1-indicator {
+            opacity: 1;
+            animation: bounce 0.6s infinite alternate;
+        }
+        
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-4px); } }
+
+        /* --- MINI GAME FLOATING CARD --- */
+        #floating-game-card {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 320px;
+            height: 240px; 
+            background: white;
+            border: 2px solid #e5e5e5;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 60;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        #floating-game-card:hover {
+            border-color: black;
+            transform: scale(1.02);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+        canvas#mini-game-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- AUDIO TOGGLE --- */
+        #audio-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+            background: white;
+            border: 2px solid #e5e5e5;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        #audio-toggle:hover { border-color: black; transform: scale(1.1); }
+        #audio-toggle.is-playing { background: #f0fdf4; border-color: #22c55e; color: #16a34a; }
+
+        /* --- WIKI TYPOGRAPHY & COMPONENTS --- */
+        h1, h2, h3 { font-weight: 700; color: var(--accent-black); letter-spacing: -0.03em; }
+        .wiki-header-title { font-size: 3.5rem; line-height: 1.1; }
+
+        .infobox {
+            border: 1px solid var(--border-color);
+            background-color: white;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+        }
+
+        .project-card {
+            background-color: var(--card-bg);
+            border-radius: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid transparent;
+            position: relative;
+        }
+        .project-card:hover {
+            background-color: white;
+            border-color: #000;
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1);
+        }
+
+        .pill-tag {
+            background-color: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 9999px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .project-card:hover .pill-tag { background-color: #111; color: white; border-color: #111; }
+
+        #canvas-container {
+            width: 100%;
+            height: 240px;
+            background: #f5f5f5; 
+            cursor: grab;
+            position: relative;
+            overflow: hidden;
+        }
+        #canvas-container:active { cursor: grabbing; }
+
+        /* --- SIDEBAR ACTIVE STATES --- */
+        .sidebar-link {
+            transition: all 0.3s ease;
+            border-left: 2px solid transparent;
+            padding-left: 10px;
+            margin-left: -12px;
+            opacity: 0.6;
+        }
+        .sidebar-link.active {
+            border-left-color: black;
+            opacity: 1;
+            font-weight: 600;
+            color: black;
+        }
+        .sidebar-link:hover { opacity: 1; background: #f3f4f6; border-radius: 0 4px 4px 0; }
+
+        /* MODAL STYLES */
+        #project-modal {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            transition: opacity 0.3s ease;
+        }
+        #project-modal.hide { opacity: 0; pointer-events: none; }
+        .modal-content { transform: scale(1); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        #project-modal.hide .modal-content { transform: scale(0.95); }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen selection:bg-black selection:text-white">
+
+    <!-- AUDIO CONTROLS -->
+    <button id="audio-toggle" onclick="audioManager.toggle()" title="Toggle Sound">
+        <i data-lucide="volume-x" id="audio-icon" class="w-5 h-5"></i>
+    </button>
+
+    <!-- ========================================= -->
+    <!-- LANDING PAGE (Character Select) -->
+    <!-- ========================================= -->
+    <section id="landing-page">
+        <!-- Retro Effects -->
+        <div class="retro-grid"></div>
+        <div class="crt-overlay"></div>
+
+        <div class="max-w-7xl w-full px-6 text-center relative z-20 flex flex-col items-center justify-center min-h-screen py-10">
+            
+            <!-- Header Area -->
+            <div class="mb-12 fade-in-up" style="animation-delay: 0.1s;">
+                <p class="pixel-font text-xs md:text-sm text-gray-400 mb-4 animate-pulse">INSERT COIN TO START</p>
+                <h1 class="text-[4rem] md:text-[6rem] font-black leading-none tracking-tighter text-black mb-6 drop-shadow-sm">
+                    VANSHAM
+                </h1>
+                <div class="pixel-font text-xs md:text-sm bg-black text-white py-3 px-6 inline-block rounded shadow-lg">
+                    SELECT PLAYER CLASS
+                </div>
+            </div>
+
+            <!-- Character Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl mx-auto mb-10">
+                
+                <!-- 1. Designer -->
+                <button onclick="app.selectCharacter(this, 'designer')" data-role="designer" class="persona-card p-8 text-left group fade-in-up flex flex-col h-full rounded-xl" style="animation-delay: 0.2s;">
+                    <div class="p1-indicator">P1</div>
+                    <div class="icon-wrapper flex justify-center items-center h-32 mb-6 border-2 border-dashed border-gray-100 rounded-2xl group-hover:border-transparent transition-all">
+                        <i data-lucide="pen-tool" class="w-16 h-16 text-gray-300 group-hover:text-black transition-all group-hover:scale-110"></i>
+                    </div>
+                    <div class="mt-auto text-center">
+                        <h3 class="pixel-font text-sm mb-2 leading-relaxed">DESIGNER</h3>
+                        <div class="flex justify-center gap-1 mb-4">
+                            <!-- Stat Bars (Visual Only) -->
+                            <div class="w-2 h-4 bg-black"></div><div class="w-2 h-4 bg-black"></div><div class="w-2 h-4 bg-black"></div><div class="w-2 h-4 bg-gray-200"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 font-mono">INT: HIGH / STR: LOW</p>
+                        <div class="game-select-text text-[10px] bg-black text-white inline-block px-2 py-1 rounded mt-3">PRESS START</div>
+                    </div>
+                </button>
+
+                <!-- 2. Community -->
+                <button onclick="app.selectCharacter(this, 'community')" data-role="community" class="persona-card p-8 text-left group fade-in-up flex flex-col h-full rounded-xl" style="animation-delay: 0.3s;">
+                    <div class="p1-indicator">P1</div>
+                    <div class="icon-wrapper flex justify-center items-center h-32 mb-6 border-2 border-dashed border-gray-100 rounded-2xl group-hover:border-transparent transition-all">
+                        <i data-lucide="users" class="w-16 h-16 text-gray-300 group-hover:text-blue-600 transition-all group-hover:scale-110"></i>
+                    </div>
+                    <div class="mt-auto text-center">
+                        <h3 class="pixel-font text-sm mb-2 leading-relaxed text-gray-900 group-hover:text-blue-600">COMMUNITY</h3>
+                        <div class="flex justify-center gap-1 mb-4">
+                            <div class="w-2 h-4 bg-blue-600"></div><div class="w-2 h-4 bg-blue-600"></div><div class="w-2 h-4 bg-blue-600"></div><div class="w-2 h-4 bg-blue-600"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 font-mono">CHA: MAX / DEX: MED</p>
+                        <div class="game-select-text text-[10px] bg-blue-600 text-white inline-block px-2 py-1 rounded mt-3">PRESS START</div>
+                    </div>
+                </button>
+
+                <!-- 3. Mentor -->
+                <button onclick="app.selectCharacter(this, 'mentor')" data-role="mentor" class="persona-card p-8 text-left group fade-in-up flex flex-col h-full rounded-xl" style="animation-delay: 0.4s;">
+                    <div class="p1-indicator">P1</div>
+                    <div class="icon-wrapper flex justify-center items-center h-32 mb-6 border-2 border-dashed border-gray-100 rounded-2xl group-hover:border-transparent transition-all">
+                        <i data-lucide="lightbulb" class="w-16 h-16 text-gray-300 group-hover:text-yellow-500 transition-all group-hover:scale-110"></i>
+                    </div>
+                    <div class="mt-auto text-center">
+                        <h3 class="pixel-font text-sm mb-2 leading-relaxed text-gray-900 group-hover:text-yellow-600">MENTOR</h3>
+                        <div class="flex justify-center gap-1 mb-4">
+                            <div class="w-2 h-4 bg-yellow-500"></div><div class="w-2 h-4 bg-yellow-500"></div><div class="w-2 h-4 bg-gray-200"></div><div class="w-2 h-4 bg-gray-200"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 font-mono">WIS: HIGH / LCK: MED</p>
+                        <div class="game-select-text text-[10px] bg-yellow-600 text-white inline-block px-2 py-1 rounded mt-3">PRESS START</div>
+                    </div>
+                </button>
+
+                <!-- 4. Speaker -->
+                <button onclick="app.selectCharacter(this, 'speaker')" data-role="speaker" class="persona-card p-8 text-left group fade-in-up flex flex-col h-full rounded-xl" style="animation-delay: 0.5s;">
+                    <div class="p1-indicator">P1</div>
+                    <div class="icon-wrapper flex justify-center items-center h-32 mb-6 border-2 border-dashed border-gray-100 rounded-2xl group-hover:border-transparent transition-all">
+                        <i data-lucide="mic" class="w-16 h-16 text-gray-300 group-hover:text-red-500 transition-all group-hover:scale-110"></i>
+                    </div>
+                    <div class="mt-auto text-center">
+                        <h3 class="pixel-font text-sm mb-2 leading-relaxed text-gray-900 group-hover:text-red-600">SPEAKER</h3>
+                        <div class="flex justify-center gap-1 mb-4">
+                            <div class="w-2 h-4 bg-red-500"></div><div class="w-2 h-4 bg-red-500"></div><div class="w-2 h-4 bg-red-500"></div><div class="w-2 h-4 bg-gray-200"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 font-mono">SPE: HIGH / DEF: LOW</p>
+                        <div class="game-select-text text-[10px] bg-red-600 text-white inline-block px-2 py-1 rounded mt-3">PRESS START</div>
+                    </div>
+                </button>
+
+            </div>
+            
+            <!-- Floating Mini Game -->
+            <div id="floating-game-card" class="fade-in-up hidden md:flex" style="animation-delay: 0.6s;">
+                <div class="relative flex-1 overflow-hidden h-full bg-white">
+                    <canvas id="mini-game-canvas"></canvas>
+                    <div class="absolute top-2 left-3 text-[10px] font-mono text-gray-400 pointer-events-none tracking-widest">SYSTEM.NODE.UPLINK</div>
+                </div>
+                <!-- Control Text Footer -->
+                <div class="bg-gray-50 border-t border-gray-200 px-4 py-3 flex justify-between items-center text-[10px] font-mono text-gray-500 uppercase tracking-wide">
+                    <span>Proximity Sensor: ON</span>
+                    <span class="flex items-center gap-2">
+                        <span class="text-black font-bold" id="node-count">0 Nodes</span>
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="mt-6 text-xs text-gray-400 font-mono opacity-60">
+                CREDITS: 01 &bull; HIGH SCORE: 99999
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================= -->
+    <!-- WIKI LAYOUT -->
+    <!-- ========================================= -->
+    <div id="wiki-layout" class="hide flex flex-col min-h-screen transition-opacity duration-500 opacity-0 bg-white">
+        
+        <!-- Navigation -->
+        <nav class="py-4 px-6 md:px-10 flex items-center justify-between sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-transparent">
+            
+            <!-- Left Side: Back Button + Branding -->
+            <div class="flex items-center gap-4">
+                <button onclick="app.goHome()" class="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors group" title="Change Character">
+                    <i data-lucide="arrow-left" class="w-5 h-5 text-gray-500 group-hover:text-black"></i>
+                </button>
+                <div class="flex items-center gap-3 cursor-pointer" onclick="app.goHome()">
+                    <div class="w-8 h-8 bg-black rounded-full flex items-center justify-center text-white font-bold text-sm">V</div>
+                    <div class="hidden md:block font-bold text-lg tracking-tight">Vansham</div>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex flex-1 max-w-md mx-auto">
+                <div class="relative w-full group">
+                    <input type="text" placeholder="Search Wiki..." class="w-full bg-gray-100 group-hover:bg-gray-50 border-none rounded-full py-2.5 px-6 text-sm focus:ring-2 focus:ring-black/5 transition-all outline-none">
+                    <i data-lucide="search" class="absolute right-4 top-2.5 w-4 h-4 text-gray-400"></i>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button class="bg-black text-white px-5 py-2.5 rounded-full text-xs font-bold hover:bg-gray-800 transition-all shadow-lg shadow-black/10">Contact</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="flex flex-col md:flex-row flex-1 max-w-[1400px] mx-auto w-full relative">
+
+            <!-- Sidebar -->
+            <aside class="w-full md:w-56 lg:w-64 p-8 hidden md:block sticky top-20 h-[calc(100vh-80px)] overflow-y-auto">
+                <div class="font-bold text-black mb-6 text-xs uppercase tracking-widest opacity-40">Quick Index</div>
+                <ul class="space-y-2 text-sm font-medium text-gray-500" id="sidebar-nav">
+                    <li><a href="#intro" class="sidebar-link block text-black active">Introduction</a></li>
+                    <li><a href="#biography" class="sidebar-link block hover:text-black">Biography</a></li>
+                    <li><a href="#projects" class="sidebar-link block hover:text-black"><span id="sidebar-work-label">Selected Work</span></a></li>
+                    <li><a href="#references" class="sidebar-link block hover:text-black">References</a></li>
+                </ul>
+
+                <div class="mt-12 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <p class="text-xs text-gray-400 mb-2">Current Context</p>
+                    <div class="flex items-center gap-2">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                        <span class="text-xs font-bold text-black" id="status-pill">Open to work</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Dynamic Center Content -->
+            <main class="flex-1 p-6 md:p-12 min-w-0" id="main-content">
+                
+                <!-- Header -->
+                <div class="pb-8 mb-12 border-b border-gray-100 fade-in-up">
+                    <h1 class="wiki-header-title text-black mb-2" id="page-title">Product<br>Designer.</h1>
+                    <div class="flex items-center gap-4 mt-6">
+                        <div class="flex gap-2" id="header-tags">
+                             <!-- JS Injected Tags -->
+                        </div>
+                        <div class="h-px flex-1 bg-gray-100"></div>
+                        <div class="text-xs text-gray-400 flex items-center gap-1">
+                            <i data-lucide="globe" class="w-3 h-3"></i> EN
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Intro -->
+                <section id="intro" class="mb-16 text-xl md:text-2xl leading-relaxed text-gray-800 font-light fade-in-up" style="animation-delay: 0.1s">
+                    <div id="intro-content">
+                        <!-- JS Injected Intro -->
+                    </div>
+                </section>
+
+                <!-- Biography -->
+                <section id="biography" class="mb-20 fade-in-up" style="animation-delay: 0.2s">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-3xl font-bold">Biography</h2>
+                        <button class="text-xs font-bold border-b border-black pb-0.5 opacity-50">Edit Section</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="bio-grid">
+                        <!-- JS Injected Bio -->
+                    </div>
+                </section>
+
+                <!-- Works -->
+                <section id="projects" class="mb-20 fade-in-up" style="animation-delay: 0.3s">
+                    <div class="flex items-center justify-between mb-10">
+                        <h2 class="text-3xl font-bold" id="section-work-title">Selected Works</h2>
+                        <span class="text-sm text-gray-400">2021 — 2024</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="projects-grid">
+                        <!-- JS Injected Projects -->
+                    </div>
+                </section>
+
+                <!-- References -->
+                <section id="references" class="mb-12 fade-in-up" style="animation-delay: 0.4s">
+                    <h2 class="text-2xl font-bold mb-8">References</h2>
+                    <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100" id="references-box">
+                        <!-- JS Injected References -->
+                    </div>
+                </section>
+
+            </main>
+
+            <!-- Right InfoBox -->
+            <aside class="w-full md:w-80 lg:w-96 p-6 md:pr-10">
+                <div class="infobox w-full fade-in-up sticky top-24" style="animation-delay: 0.2s">
+                    <div id="canvas-container" class="relative group" title="Interact with me!">
+                        <div class="absolute top-4 left-4 z-10 pointer-events-none">
+                             <span class="bg-white/80 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-gray-200">Interactive</span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold mb-1">Vansham</h3>
+                        <p class="text-gray-500 text-sm mb-6" id="info-role">Product Designer</p>
+
+                        <div class="space-y-4" id="info-stats">
+                             <!-- JS Injected Stats -->
+                        </div>
+
+                        <button class="w-full mt-6 bg-black text-white py-3 rounded-xl font-bold text-sm hover:scale-105 transition-transform">Download Resume</button>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-[#111] text-white py-20 px-6 mt-12">
+            <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-end gap-10">
+                <div>
+                    <h2 class="text-5xl md:text-7xl font-bold tracking-tighter mb-6">Let's Connect<br>There.</h2>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#" class="px-6 py-3 border border-white/20 rounded-full hover:bg-white hover:text-black transition-all">LinkedIn</a>
+                        <a href="#" class="px-6 py-3 border border-white/20 rounded-full hover:bg-white hover:text-black transition-all">Twitter</a>
+                        <a href="#" class="px-6 py-3 bg-white text-black rounded-full font-bold hover:scale-105 transition-transform">Email Me</a>
+                    </div>
+                </div>
+                <div class="text-right text-gray-500 text-sm">
+                    <p class="mb-2">Based in India.</p>
+                    <p>&copy; 2025 Vansham.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- AUDIO LOGIC -->
+    <script>
+        const audioManager = {
+            ctx: null,
+            masterGain: null,
+            bgOsc: [],
+            isPlaying: false,
+
+            init: function() {
+                if(this.ctx) return;
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                this.ctx = new AudioContext();
+                this.masterGain = this.ctx.createGain();
+                this.masterGain.connect(this.ctx.destination);
+                this.masterGain.gain.setValueAtTime(0.3, this.ctx.currentTime); 
+                
+                this.playAmbience();
+                this.isPlaying = true;
+                this.updateIcon();
+            },
+
+            toggle: function() {
+                if(!this.ctx) {
+                    this.init();
+                    return;
+                }
+                
+                if(this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                    this.isPlaying = true;
+                } else if(this.isPlaying) {
+                    this.masterGain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.5);
+                    this.isPlaying = false;
+                } else {
+                    this.masterGain.gain.exponentialRampToValueAtTime(0.3, this.ctx.currentTime + 0.5);
+                    this.isPlaying = true;
+                }
+                this.updateIcon();
+            },
+
+            updateIcon: function() {
+                const btn = document.getElementById('audio-toggle');
+                const icon = document.getElementById('audio-icon');
+                if(this.isPlaying) {
+                    btn.classList.add('is-playing');
+                    icon.setAttribute('data-lucide', 'volume-2');
+                } else {
+                    btn.classList.remove('is-playing');
+                    icon.setAttribute('data-lucide', 'volume-x');
+                }
+                lucide.createIcons();
+            },
+
+            playClick: function() {
+                if(!this.ctx || !this.isPlaying) {
+                    if(!this.ctx) this.init(); 
+                    return; 
+                }
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.masterGain);
+
+                // Standard Click - Crisp and Short
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.05);
+                
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.05);
+            },
+
+            playSelect: function() {
+                if(!this.ctx || !this.isPlaying) return;
+                
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.masterGain);
+
+                // Power Up / Select Sound (Rapid Frequency Sweep)
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(200, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(800, this.ctx.currentTime + 0.1);
+                
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.2);
+
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.2);
+            },
+
+            playAmbience: function() {
+                // Inspirational Pentatonic Pad (Warm Triangle Waves)
+                const freqs = [196.00, 261.63, 293.66, 329.63, 392.00]; // G3, C4, D4, E4, G4 (C Major Pentatonic)
+                freqs.forEach((f, i) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(this.masterGain);
+                    
+                    osc.type = 'triangle'; // Softer, warmer sound
+                    osc.frequency.value = f;
+                    
+                    // Slight detune for analog feel
+                    osc.detune.value = (Math.random() - 0.5) * 5;
+
+                    // LFO for slow movement
+                    const lfo = this.ctx.createOscillator();
+                    lfo.frequency.value = 0.05 + Math.random() * 0.1;
+                    const lfoGain = this.ctx.createGain();
+                    lfoGain.gain.value = 0.03;
+                    lfo.connect(lfoGain);
+                    lfoGain.connect(gain.gain);
+                    lfo.start();
+
+                    gain.gain.value = 0.02; // Very quiet background
+                    osc.start();
+                    this.bgOsc.push(osc);
+                });
+            }
+        };
+
+        // Attach click listener to whole document to init audio
+        document.addEventListener('click', () => {
+            if(!audioManager.ctx) audioManager.init();
+        }, { once: true });
+
+        // Add Play Sound to Buttons
+        document.querySelectorAll('button, .sidebar-link').forEach(el => {
+            el.addEventListener('click', () => audioManager.playClick());
+        });
+
+    </script>
+
+    <!-- LOGIC -->
+    <script>
+        // Data Store
+        const DATA = {
+            designer: {
+                title: "Product<br>Designer.",
+                tags: ["UI/UX", "Product", "Systems"],
+                status: "Open to work",
+                workLabel: "Selected Works",
+                intro: `<p class="mb-6"><span class="font-semibold text-black">Vansham</span> is an Indian product designer who creates intuitive digital experiences.</p><p class="text-base text-gray-500 leading-loose max-w-2xl">Merging the structural clarity of encyclopedic knowledge with modern aesthetics. His work focuses on bridging the gap between functional utility and visual storytelling.</p>`,
+                bio: [
+                    { icon: "graduation-cap", title: "Education", text: "B.Des in Interaction Design from NID. Specialized in Human-Computer Interaction." },
+                    { icon: "layers", title: "Stack", text: "Figma, Prototyping, Design Systems. Comfortable with React & Tailwind." }
+                ],
+                projects: [
+                    { id: 1, title: "Fintech Dashboard", tag: "Fintech", year: "2023", desc: "Overhauling a banking interface to improve transaction clarity and user retention.", img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800" },
+                    { id: 2, title: "Project Orbit", tag: "SaaS", year: "2022", desc: "Collaborative workspace tool for remote teams featuring real-time editing.", img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800" },
+                    { id: 3, title: "HealthPlus Mobile", tag: "Health", year: "2024", desc: "Patient-first mobile application connecting users with local specialists.", img: "https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&q=80&w=800" },
+                    { title: "Collaboration", tag: "Future", year: "Next", desc: "Ready to start a new project? I am open to new opportunities.", isPlaceholder: true }
+                ],
+                role: "Product & UI Designer",
+                stats: [{l:"EXP",v:"4+ Years"}, {l:"TOOLS",v:["Figma","Spline"]}],
+                shape: "torus"
+            },
+            community: {
+                title: "Community<br>Manager.",
+                tags: ["Growth", "Events", "Discord"],
+                status: "Building Tribes",
+                workLabel: "Community Initiatives",
+                intro: `<p class="mb-6"><span class="font-semibold text-black">Vansham</span> is a community builder who connects people through shared passions.</p><p class="text-base text-gray-500 leading-loose max-w-2xl">Expert in scaling discord servers, organizing hackathons, and fostering engagement. He believes in the power of 'Community-Led Growth'.</p>`,
+                bio: [
+                    { icon: "users", title: "Experience", text: "Managed communities of 50k+ members for Web3 and EdTech startups." },
+                    { icon: "mic", title: "Events", text: "Hosted 100+ AMAs, Twitter Spaces, and IRL meetups across India." }
+                ],
+                projects: [
+                    { id: 4, title: "Designers Guild", tag: "Discord", year: "2023", desc: "Grew a design community from 0 to 10k members in 6 months.", img: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800" },
+                    { id: 5, title: "TechWeek", tag: "Event", year: "2024", desc: "Organized a 3-day hackathon with 500+ participants.", img: "https://images.unsplash.com/photo-1540575467063-178a509a24fc?auto=format&fit=crop&q=80&w=800" }
+                ],
+                role: "Community Lead",
+                stats: [{l:"MEMBERS",v:"50k+"}, {l:"SKILLS",v:["Discord","Luma"]}],
+                shape: "sphere"
+            },
+            mentor: {
+                title: "Design<br>Mentor.",
+                tags: ["Education", "Guidance", "Review"],
+                status: "Accepting Mentees",
+                workLabel: "Mentorship",
+                intro: `<p class="mb-6"><span class="font-semibold text-black">Vansham</span> is an educator dedicated to helping early-career designers navigate the industry.</p><p class="text-base text-gray-500 leading-loose max-w-2xl">Through 1:1 sessions and portfolio reviews, he has guided over 200+ students into their first design roles.</p>`,
+                bio: [
+                    { icon: "heart", title: "Impact", text: "Top 1% Mentor on ADPList. Helped students land jobs at Unicorns." },
+                    { icon: "book-open", title: "Workshops", text: "Conducted 20+ workshops on 'Design Systems' and 'Auto Layout'." }
+                ],
+                projects: [
+                    { id: 6, title: "UX Bootcamp", tag: "Course", year: "2023", desc: "A 4-week cohort based course teaching the fundamentals of UX.", img: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800" },
+                    { id: 7, title: "Portfolio Review", tag: "Live", year: "Ongoing", desc: "Weekly live streams reviewing junior portfolios.", img: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800" }
+                ],
+                role: "Design Educator",
+                stats: [{l:"STUDENTS",v:"200+"}, {l:"PLATFORM",v:["ADPList","Topmate"]}],
+                shape: "cone"
+            },
+            speaker: {
+                title: "Public<br>Speaker.",
+                tags: ["Keynotes", "Podcasts", "Panels"],
+                status: "Available for Talks",
+                workLabel: "Talks & Media",
+                intro: `<p class="mb-6"><span class="font-semibold text-black">Vansham</span> shares insights on design ethics and future tech.</p><p class="text-base text-gray-500 leading-loose max-w-2xl">A regular voice at tech conferences and design podcasts, aiming to demystify complex UX concepts for broader audiences.</p>`,
+                bio: [
+                    { icon: "mic-2", title: "Stages", text: "Spoke at React India, DesignUp, and local TEDx events." },
+                    { icon: "radio", title: "Podcast", text: "Host of 'The Design Loop', featuring interviews with industry leaders." }
+                ],
+                projects: [
+                    { id: 8, title: "React India", tag: "Talk", year: "2023", desc: "Keynote on 'Bridging the Gap between Design and Code'.", img: "https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&w=800" },
+                    { id: 9, title: "Design Loop", tag: "Podcast", year: "2024", desc: "Interview with the VP of Design at Cred.", img: "https://images.unsplash.com/photo-1478737270239-2f02b77ac6d5?auto=format&fit=crop&q=80&w=800" }
+                ],
+                role: "Keynote Speaker",
+                stats: [{l:"TALKS",v:"15+"}, {l:"TOPICS",v:["UX","AI"]}],
+                shape: "icosahedron"
+            }
+        };
+
+        // App Logic
+        const app = {
+            landing: document.getElementById('landing-page'),
+            wiki: document.getElementById('wiki-layout'),
+            modal: document.getElementById('project-modal'),
+            
+            selectCharacter: function(cardElement, type) {
+                audioManager.playSelect(); // Play specific selection sound
+                document.querySelectorAll('.persona-card').forEach(c => c.classList.remove('blink-select'));
+                cardElement.classList.add('blink-select');
+                setTimeout(() => {
+                    this.loadPersona(type);
+                }, 600);
+            },
+
+            loadPersona: function(type) {
+                const data = DATA[type];
+                if (!data) return;
+
+                this.landing.classList.add('fade-out');
+                setTimeout(() => {
+                    this.landing.classList.add('hide');
+                    this.wiki.classList.remove('hide');
+                    void this.wiki.offsetWidth; 
+                    this.wiki.style.opacity = '1';
+                    window.scrollTo(0,0);
+                    threeJS.resize();
+                }, 300);
+
+                // Inject Data
+                document.getElementById('page-title').innerHTML = data.title;
+                document.getElementById('intro-content').innerHTML = data.intro;
+                document.getElementById('status-pill').textContent = data.status;
+                document.getElementById('sidebar-work-label').textContent = data.workLabel;
+                document.getElementById('section-work-title').textContent = data.workLabel;
+                document.getElementById('info-role').textContent = data.role;
+
+                document.getElementById('header-tags').innerHTML = data.tags.map(t => 
+                    `<span class="pill-tag bg-gray-100 text-gray-600">${t}</span>`
+                ).join('');
+
+                document.getElementById('bio-grid').innerHTML = data.bio.map(b => `
+                    <div class="bg-gray-50 p-8 rounded-[2rem] hover:bg-gray-100 transition-colors">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm">
+                            <i data-lucide="${b.icon}" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">${b.title}</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed">${b.text}</p>
+                    </div>
+                `).join('');
+
+                document.getElementById('projects-grid').innerHTML = data.projects.map(p => {
+                    if (p.isPlaceholder) {
+                        return `
+                        <div class="project-card p-8 group cursor-pointer reveal-on-scroll is-visible bg-gray-100 flex flex-col items-center justify-center text-center">
+                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform">
+                                <i data-lucide="plus" class="w-8 h-8 text-gray-400"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">Collaboration</h3>
+                            <p class="text-sm text-gray-500 mb-6 max-w-xs">Ready to start a new project? I am open to new opportunities.</p>
+                            <button class="bg-black text-white px-6 py-3 rounded-full text-sm font-bold">Contact Me</button>
+                        </div>`;
+                    }
+                    return `
+                    <div onclick="app.openModal('${type}', ${p.id})" class="project-card p-8 group cursor-pointer reveal-on-scroll is-visible">
+                        <div class="flex justify-between items-start mb-12">
+                            <div class="flex gap-2">
+                                <span class="pill-tag">${p.tag}</span>
+                                <span class="pill-tag">${p.year}</span>
+                            </div>
+                            <i data-lucide="arrow-up-right" class="w-6 h-6 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all"></i>
+                        </div>
+                        <div class="mb-4">
+                            <h3 class="text-2xl font-bold mb-2">${p.title}</h3>
+                            <p class="text-sm text-gray-500">${p.desc}</p>
+                        </div>
+                        <div class="w-full h-48 bg-gray-200 rounded-2xl overflow-hidden mt-6 relative">
+                             <img src="${p.img}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105">
+                        </div>
+                    </div>`;
+                }).join('');
+
+                document.getElementById('info-stats').innerHTML = data.stats.map(s => `
+                    <div class="flex justify-between items-start py-2 border-b border-gray-100">
+                        <span class="text-xs font-bold text-gray-400 uppercase mt-1">${s.l}</span>
+                        <div class="flex flex-wrap gap-1 justify-end max-w-[150px]">
+                            ${Array.isArray(s.v) 
+                                ? s.v.map(v => `<span class="px-2 py-1 bg-gray-100 rounded text-[10px] font-bold">${v}</span>`).join('')
+                                : `<span class="text-sm font-medium">${s.v}</span>`
+                            }
+                        </div>
+                    </div>
+                `).join('');
+
+                document.getElementById('references-box').innerHTML = `
+                    <div class="space-y-6">
+                        <div class="flex gap-4 items-start">
+                            <span class="text-xs font-bold bg-black text-white px-2 py-1 rounded">1</span>
+                            <p class="text-sm text-gray-600 leading-relaxed">"Vansham brings energy and clarity to every ${type} role he takes on." — <span class="font-bold text-black">Sarah Jenkins</span>.</p>
+                        </div>
+                    </div>
+                `;
+
+                lucide.createIcons();
+                threeJS.updateShape(data.shape);
+            },
+
+            goHome: function() {
+                audioManager.playClick();
+                this.wiki.style.opacity = '0';
+                setTimeout(() => {
+                    this.wiki.classList.add('hide');
+                    document.querySelectorAll('.persona-card').forEach(c => c.classList.remove('blink-select'));
+                    this.landing.classList.remove('hide');
+                    this.landing.classList.remove('fade-out');
+                    void this.landing.offsetWidth; 
+                }, 400);
+            },
+
+            openModal: function(type, id) {
+                audioManager.playClick();
+                const project = DATA[type].projects.find(p => p.id === id);
+                if (!project) return;
+                document.getElementById('modal-title').textContent = project.title;
+                document.getElementById('modal-desc').textContent = project.desc;
+                document.getElementById('modal-tag').textContent = project.tag;
+                document.getElementById('modal-year').textContent = project.year;
+                document.getElementById('modal-img').src = project.img;
+                this.modal.classList.remove('hide');
+            },
+
+            closeModal: function() {
+                audioManager.playClick();
+                this.modal.classList.add('hide');
+            }
+        };
+
+        window.addEventListener('scroll', () => {
+            const sections = ['intro', 'biography', 'projects', 'references'];
+            const navLinks = document.querySelectorAll('.sidebar-link');
+            let current = '';
+            sections.forEach(section => {
+                const element = document.getElementById(section);
+                if (element && scrollY >= element.offsetTop - 150) {
+                    current = section;
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) link.classList.add('active');
+            });
+        });
+
+        const threeJS = {
+            scene: null, camera: null, renderer: null, mesh: null,
+            targetRotationX: 0, targetRotationY: 0,
+            init: function() {
+                const container = document.getElementById('canvas-container');
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0xf5f5f5);
+                this.camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+                this.camera.position.z = 6;
+                this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                this.renderer.setSize(container.clientWidth, container.clientHeight);
+                container.appendChild(this.renderer.domElement);
+
+                container.addEventListener('mousemove', (e) => {
+                    const rect = container.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                    const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+                    this.targetRotationY = x * 0.5; 
+                    this.targetRotationX = y * 0.5; 
+                });
+                
+                container.addEventListener('mouseleave', () => {
+                    this.targetRotationX = 0; this.targetRotationY = 0;
+                });
+
+                this.animate();
+                new ResizeObserver(() => this.resize()).observe(container);
+            },
+            
+            resize: function() {
+                const container = document.getElementById('canvas-container');
+                if (!container || !this.renderer) return;
+                this.renderer.setSize(container.clientWidth, container.clientHeight);
+                this.camera.aspect = container.clientWidth / container.clientHeight;
+                this.camera.updateProjectionMatrix();
+            },
+
+            updateShape: function(type) {
+                if(this.mesh) this.scene.remove(this.mesh);
+                let geo;
+                if(type === 'sphere') geo = new THREE.SphereGeometry(1.2, 16, 16);
+                else if(type === 'cone') geo = new THREE.ConeGeometry(1, 2, 16);
+                else if(type === 'icosahedron') geo = new THREE.IcosahedronGeometry(1.3, 0);
+                else geo = new THREE.TorusKnotGeometry(1.0, 0.3, 100, 16);
+                const mat = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true, transparent: true, opacity: 0.15 });
+                this.mesh = new THREE.Mesh(geo, mat);
+                this.scene.add(this.mesh);
+            },
+            
+            animate: function() {
+                requestAnimationFrame(this.animate.bind(this));
+                if(this.mesh) {
+                    // Base Rotation
+                    this.mesh.rotation.x += 0.005;
+                    this.mesh.rotation.y += 0.005;
+
+                    // Smooth Interaction Lerp
+                    this.mesh.rotation.x += 0.05 * (this.targetRotationX - this.mesh.rotation.x * 0.1); 
+                    this.mesh.rotation.y += 0.05 * (this.targetRotationY - this.mesh.rotation.y * 0.1);
+                }
+                this.renderer.render(this.scene, this.camera);
+            }
+        };
+
+        const miniGame = {
+            canvas: null, ctx: null, nodes: [], mouse: {x: -1000, y: -1000}, cardRect: null,
+            maxNodes: 60,
+            
+            init: function() {
+                this.canvas = document.getElementById('mini-game-canvas');
+                if(!this.canvas) return;
+                this.ctx = this.canvas.getContext('2d');
+                
+                for(let i=0; i<20; i++) this.addNode();
+
+                const card = document.getElementById('floating-game-card');
+                card.addEventListener('mousemove', e => {
+                    this.cardRect = this.canvas.getBoundingClientRect();
+                    this.mouse.x = e.clientX - this.cardRect.left;
+                    this.mouse.y = e.clientY - this.cardRect.top;
+                });
+                card.addEventListener('mouseleave', () => { this.mouse.x = -1000; this.mouse.y = -1000; });
+
+                new ResizeObserver(() => this.resize()).observe(card);
+                this.resize();
+                
+                // Auto Spawn Stream
+                setInterval(() => this.spawnNode(), 800);
+                
+                this.animate();
+            },
+
+            addNode: function() {
+               this.nodes.push({
+                    x: Math.random() * this.canvas.width,
+                    y: Math.random() * this.canvas.height,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.5,
+                    size: Math.random() * 2 + 1
+                });
+            },
+
+            spawnNode: function() {
+                if (this.nodes.length >= this.maxNodes) return;
+                let x, y;
+                if (Math.random() > 0.5) {
+                    x = Math.random() > 0.5 ? 0 : this.canvas.width;
+                    y = Math.random() * this.canvas.height;
+                } else {
+                    x = Math.random() * this.canvas.width;
+                    y = Math.random() > 0.5 ? 0 : this.canvas.height;
+                }
+                this.nodes.push({ x: x, y: y, vx: (Math.random() - 0.5) * 1.5, vy: (Math.random() - 0.5) * 1.5, size: Math.random() * 2 + 1 });
+                
+                // Update counter
+                const countEl = document.getElementById('node-count');
+                if(countEl) countEl.innerText = `${this.nodes.length} Nodes`;
+            },
+
+            resize: function() {
+                if(!this.canvas) return;
+                const parent = this.canvas.parentElement;
+                this.canvas.width = parent.clientWidth;
+                this.canvas.height = parent.clientHeight;
+                this.cardRect = this.canvas.getBoundingClientRect();
+            },
+
+            animate: function() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.nodes.forEach(node => {
+                    // Friction
+                    node.vx *= 0.99;
+                    node.vy *= 0.99;
+                    
+                    // Min speed keep alive
+                    if(Math.abs(node.vx) < 0.2) node.vx += (Math.random()-0.5)*0.1;
+                    if(Math.abs(node.vy) < 0.2) node.vy += (Math.random()-0.5)*0.1;
+
+                    node.x += node.vx;
+                    node.y += node.vy;
+
+                    // Bounce
+                    if(node.x < 0 || node.x > this.canvas.width) node.vx *= -1;
+                    if(node.y < 0 || node.y > this.canvas.height) node.vy *= -1;
+
+                    // Mouse Interaction
+                    const dx = this.mouse.x - node.x;
+                    const dy = this.mouse.y - node.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    
+                    // Reduced radius (80px) and friction based movement
+                    if(dist < 80) {
+                        node.x += dx * 0.03; 
+                        node.y += dy * 0.03;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(node.x, node.y);
+                        this.ctx.lineTo(this.mouse.x, this.mouse.y);
+                        this.ctx.strokeStyle = `rgba(0,0,0,${1 - dist/80})`;
+                        this.ctx.lineWidth = 0.5;
+                        this.ctx.stroke();
+                    }
+
+                    // Connections
+                    this.nodes.forEach(other => {
+                        const odx = other.x - node.x;
+                        const ody = other.y - node.y;
+                        const odist = Math.sqrt(odx*odx + ody*ody);
+                        if(odist < 50) {
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(node.x, node.y);
+                            this.ctx.lineTo(other.x, other.y);
+                            this.ctx.strokeStyle = `rgba(0,0,0,${0.15 * (1 - odist/50)})`;
+                            this.ctx.lineWidth = 0.5;
+                            this.ctx.stroke();
+                        }
+                    });
+
+                    this.ctx.beginPath();
+                    this.ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+                    this.ctx.fillStyle = '#000';
+                    this.ctx.fill();
+                });
+
+                requestAnimationFrame(this.animate.bind(this));
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            threeJS.init();
+            miniGame.init();
+        });
+    </script>
+</body>
+</html>
