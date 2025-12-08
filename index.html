@@ -29,8 +29,9 @@
             margin: 0;
             padding: 0;
             scroll-behavior: smooth;
-            overflow-x: hidden; /* Prevent horizontal scroll */
-            overflow-y: auto;   /* Allow vertical scroll */
+            overflow-x: hidden;
+            /* Allow vertical scroll for responsiveness */
+            overflow-y: auto;   
         }
 
         body {
@@ -62,48 +63,20 @@
             50% { opacity: 0.8; filter: invert(0); }
         }
 
-        /* --- LANDING PAGE (Game Style) --- */
+        /* --- LANDING PAGE (Clean Dotted Style) --- */
         #landing-page {
             position: fixed;
             inset: 0;
             z-index: 50;
-            background-color: #f8f8f8;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow-y: auto; /* Allow scrolling on small screens if needed */
-        }
-
-        /* Animated Grid Background */
-        .retro-grid {
-            position: absolute;
-            top: -50%; left: -50%; 
-            width: 200%;
-            height: 200%;
-            background-image: 
-                linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
-            animation: gridMove 20s linear infinite;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        @keyframes gridMove {
-            0% { transform: perspective(500px) rotateX(60deg) translateY(0) translateZ(-200px); }
-            100% { transform: perspective(500px) rotateX(60deg) translateY(40px) translateZ(-200px); }
-        }
-
-        /* CRT Scanline Overlay */
-        .crt-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.03) 50%);
-            background-size: 100% 4px;
-            pointer-events: none;
-            z-index: 10;
+            background-color: #ffffff; 
+            /* Light Dotted Background */
+            background-image: radial-gradient(#e5e5e5 2px, transparent 2px);
+            background-size: 24px 24px;
+            
+            /* UPDATED: Use block display with overflow to prevent clipping top content */
+            display: block;
+            overflow-y: auto; 
+            padding: 0; /* Padding handled by inner container */
         }
 
         .pixel-font {
@@ -117,21 +90,22 @@
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            z-index: 10;
         }
 
-        /* Role-Based Hover Effects - Icon Backgrounds */
+        /* Role-Based Hover Effects */
         .icon-wrapper { transition: background-color 0.3s ease, border-color 0.3s ease; }
 
-        .persona-card[data-role="designer"]:hover { border-color: var(--color-designer); box-shadow: 0 10px 0 var(--color-designer); transform: translateY(-10px); }
+        .persona-card[data-role="designer"]:hover { border-color: var(--color-designer); box-shadow: 0 10px 0 var(--color-designer); transform: translateY(-5px); }
         .persona-card[data-role="designer"]:hover .icon-wrapper { background-color: rgba(0,0,0,0.08); border-color: var(--color-designer); }
         
-        .persona-card[data-role="community"]:hover { border-color: var(--color-community); box-shadow: 0 10px 0 var(--color-community); transform: translateY(-10px); }
+        .persona-card[data-role="community"]:hover { border-color: var(--color-community); box-shadow: 0 10px 0 var(--color-community); transform: translateY(-5px); }
         .persona-card[data-role="community"]:hover .icon-wrapper { background-color: rgba(37, 99, 235, 0.1); border-color: var(--color-community); }
 
-        .persona-card[data-role="mentor"]:hover { border-color: var(--color-mentor); box-shadow: 0 10px 0 var(--color-mentor); transform: translateY(-10px); }
+        .persona-card[data-role="mentor"]:hover { border-color: var(--color-mentor); box-shadow: 0 10px 0 var(--color-mentor); transform: translateY(-5px); }
         .persona-card[data-role="mentor"]:hover .icon-wrapper { background-color: rgba(202, 138, 4, 0.1); border-color: var(--color-mentor); }
 
-        .persona-card[data-role="speaker"]:hover { border-color: var(--color-speaker); box-shadow: 0 10px 0 var(--color-speaker); transform: translateY(-10px); }
+        .persona-card[data-role="speaker"]:hover { border-color: var(--color-speaker); box-shadow: 0 10px 0 var(--color-speaker); transform: translateY(-5px); }
         .persona-card[data-role="speaker"]:hover .icon-wrapper { background-color: rgba(220, 38, 38, 0.1); border-color: var(--color-speaker); }
 
         .game-select-text {
@@ -163,39 +137,11 @@
         
         @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-4px); } }
 
-        /* --- MINI GAME FLOATING CARD --- */
-        #floating-game-card {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 320px;
-            height: 240px; 
-            background: white;
-            border: 2px solid #e5e5e5;
-            border-radius: 1rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            z-index: 60;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        #floating-game-card:hover {
-            border-color: black;
-            transform: scale(1.02);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-        }
-        canvas#mini-game-canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-
         /* --- AUDIO TOGGLE --- */
         #audio-toggle {
             position: fixed;
-            top: 2rem;
-            right: 2rem;
+            top: 1.5rem;
+            right: 1.5rem;
             z-index: 100;
             background: white;
             border: 2px solid #e5e5e5;
@@ -213,7 +159,10 @@
 
         /* --- WIKI TYPOGRAPHY & COMPONENTS --- */
         h1, h2, h3 { font-weight: 700; color: var(--accent-black); letter-spacing: -0.03em; }
-        .wiki-header-title { font-size: 3.5rem; line-height: 1.1; }
+        .wiki-header-title { font-size: 2.5rem; line-height: 1.1; }
+        @media (min-width: 768px) {
+            .wiki-header-title { font-size: 3.5rem; }
+        }
 
         .infobox {
             border: 1px solid var(--border-color);
@@ -282,6 +231,10 @@
         #project-modal.hide { opacity: 0; pointer-events: none; }
         .modal-content { transform: scale(1); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         #project-modal.hide .modal-content { transform: scale(0.95); }
+
+        /* SCROLLBAR UTILS */
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen selection:bg-black selection:text-white">
@@ -295,110 +248,91 @@
     <!-- LANDING PAGE (Character Select) -->
     <!-- ========================================= -->
     <section id="landing-page">
-        <!-- Retro Effects -->
-        <div class="retro-grid"></div>
-        <div class="crt-overlay"></div>
-
-        <div class="max-w-7xl w-full px-6 text-center relative z-20 flex flex-col items-center justify-center min-h-screen py-10">
+        <!-- Clean Background -->
+        
+        <div class="w-full max-w-7xl mx-auto px-4 md:px-6 text-center relative z-20 flex flex-col items-center justify-center min-h-[100dvh] py-8 md:py-10">
             
             <!-- Header Area -->
-            <div class="mb-12 fade-in-up" style="animation-delay: 0.1s;">
-                <p class="pixel-font text-xs md:text-sm text-gray-400 mb-4 animate-pulse">INSERT COIN TO START</p>
-                <h1 class="text-[4rem] md:text-[6rem] font-black leading-none tracking-tighter text-black mb-6 drop-shadow-sm">
+            <div class="mb-8 md:mb-12 fade-in-up" style="animation-delay: 0.1s;">
+                <p class="pixel-font text-[10px] md:text-sm text-gray-400 mb-2 md:mb-4 animate-pulse">INSERT COIN TO START</p>
+                <h1 class="text-5xl md:text-[6rem] font-black leading-none tracking-tighter text-black mb-4 md:mb-6 drop-shadow-sm">
                     VANSHAM
                 </h1>
-                <div class="pixel-font text-xs md:text-sm bg-black text-white py-3 px-6 inline-block rounded shadow-lg">
+                <div class="pixel-font text-[10px] md:text-sm bg-black text-white py-2 px-4 md:py-3 md:px-6 inline-block rounded shadow-lg">
                     SELECT PLAYER CLASS
                 </div>
             </div>
 
             <!-- Character Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl mx-auto mb-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full max-w-6xl mx-auto mb-10 px-2 md:px-0">
                 
                 <!-- 1. Designer -->
-                <button onclick="app.selectCharacter(this, 'designer')" data-role="designer" class="persona-card p-8 text-left group fade-in-up flex flex-col h-full rounded-xl" style="animation-delay: 0.2s;">
+                <button onclick="app.selectCharacter(this, 'designer')" data-role="designer" class="persona-card p-6 md:p-8 text-left group fade-in-up flex flex-col h-full rounded-xl" style="animation-delay: 0.2s;">
                     <div class="p1-indicator">P1</div>
-                    <div class="icon-wrapper flex justify-center items-center h-32 mb-6 border-2 border-dashed border-gray-100 rounded-2xl group-hover:border-transparent transition-all">
-                        <i data-lucide="pen-tool" class="w-16 h-16 text-gray-300 group-hover:text-black transition-all group-hover:scale-110"></i>
+                    <div class="icon-wrapper flex justify-center items-center h-24 md:h-32 mb-4 md:mb-6 border-2 border-dashed border-gray-100 rounded-2xl group-hover:border-transparent transition-all">
+                        <i data-lucide="pen-tool" class="w-12 h-12 md:w-16 md:h-16 text-gray-300 group-hover:text-black transition-all group-hover:scale-110"></i>
                     </div>
                     <div class="mt-auto text-center">
-                        <h3 class="pixel-font text-sm mb-2 leading-relaxed">DESIGNER</h3>
+                        <h3 class="pixel-font text-xs md:text-sm mb-2 leading-relaxed">DESIGNER</h3>
                         <div class="flex justify-center gap-1 mb-4">
-                            <!-- Stat Bars (Visual Only) -->
                             <div class="w-2 h-4 bg-black"></div><div class="w-2 h-4 bg-black"></div><div class="w-2 h-4 bg-black"></div><div class="w-2 h-4 bg-gray-200"></div>
                         </div>
-                        <p class="text-xs text-gray-500 font-mono">INT: HIGH / STR: LOW</p>
+                        <p class="text-[10px] md:text-xs text-gray-500 font-mono">INT: HIGH / STR: LOW</p>
                         <div class="game-select-text text-[10px] bg-black text-white inline-block px-2 py-1 rounded mt-3">PRESS START</div>
                     </div>
                 </button>
 
                 <!-- 2. Community -->
-                <button onclick="app.selectCharacter(this, 'community')" data-role="community" class="persona-card p-8 text-left group fade-in-up flex flex-col h-full rounded-xl" style="animation-delay: 0.3s;">
+                <button onclick="app.selectCharacter(this, 'community')" data-role="community" class="persona-card p-6 md:p-8 text-left group fade-in-up flex flex-col h-full rounded-xl" style="animation-delay: 0.3s;">
                     <div class="p1-indicator">P1</div>
-                    <div class="icon-wrapper flex justify-center items-center h-32 mb-6 border-2 border-dashed border-gray-100 rounded-2xl group-hover:border-transparent transition-all">
-                        <i data-lucide="users" class="w-16 h-16 text-gray-300 group-hover:text-blue-600 transition-all group-hover:scale-110"></i>
+                    <div class="icon-wrapper flex justify-center items-center h-24 md:h-32 mb-4 md:mb-6 border-2 border-dashed border-gray-100 rounded-2xl group-hover:border-transparent transition-all">
+                        <i data-lucide="users" class="w-12 h-12 md:w-16 md:h-16 text-gray-300 group-hover:text-blue-600 transition-all group-hover:scale-110"></i>
                     </div>
                     <div class="mt-auto text-center">
-                        <h3 class="pixel-font text-sm mb-2 leading-relaxed text-gray-900 group-hover:text-blue-600">COMMUNITY</h3>
+                        <h3 class="pixel-font text-xs md:text-sm mb-2 leading-relaxed text-gray-900 group-hover:text-blue-600">COMMUNITY</h3>
                         <div class="flex justify-center gap-1 mb-4">
                             <div class="w-2 h-4 bg-blue-600"></div><div class="w-2 h-4 bg-blue-600"></div><div class="w-2 h-4 bg-blue-600"></div><div class="w-2 h-4 bg-blue-600"></div>
                         </div>
-                        <p class="text-xs text-gray-500 font-mono">CHA: MAX / DEX: MED</p>
+                        <p class="text-[10px] md:text-xs text-gray-500 font-mono">CHA: MAX / DEX: MED</p>
                         <div class="game-select-text text-[10px] bg-blue-600 text-white inline-block px-2 py-1 rounded mt-3">PRESS START</div>
                     </div>
                 </button>
 
                 <!-- 3. Mentor -->
-                <button onclick="app.selectCharacter(this, 'mentor')" data-role="mentor" class="persona-card p-8 text-left group fade-in-up flex flex-col h-full rounded-xl" style="animation-delay: 0.4s;">
+                <button onclick="app.selectCharacter(this, 'mentor')" data-role="mentor" class="persona-card p-6 md:p-8 text-left group fade-in-up flex flex-col h-full rounded-xl" style="animation-delay: 0.4s;">
                     <div class="p1-indicator">P1</div>
-                    <div class="icon-wrapper flex justify-center items-center h-32 mb-6 border-2 border-dashed border-gray-100 rounded-2xl group-hover:border-transparent transition-all">
-                        <i data-lucide="lightbulb" class="w-16 h-16 text-gray-300 group-hover:text-yellow-500 transition-all group-hover:scale-110"></i>
+                    <div class="icon-wrapper flex justify-center items-center h-24 md:h-32 mb-4 md:mb-6 border-2 border-dashed border-gray-100 rounded-2xl group-hover:border-transparent transition-all">
+                        <i data-lucide="lightbulb" class="w-12 h-12 md:w-16 md:h-16 text-gray-300 group-hover:text-yellow-500 transition-all group-hover:scale-110"></i>
                     </div>
                     <div class="mt-auto text-center">
-                        <h3 class="pixel-font text-sm mb-2 leading-relaxed text-gray-900 group-hover:text-yellow-600">MENTOR</h3>
+                        <h3 class="pixel-font text-xs md:text-sm mb-2 leading-relaxed text-gray-900 group-hover:text-yellow-600">MENTOR</h3>
                         <div class="flex justify-center gap-1 mb-4">
                             <div class="w-2 h-4 bg-yellow-500"></div><div class="w-2 h-4 bg-yellow-500"></div><div class="w-2 h-4 bg-gray-200"></div><div class="w-2 h-4 bg-gray-200"></div>
                         </div>
-                        <p class="text-xs text-gray-500 font-mono">WIS: HIGH / LCK: MED</p>
+                        <p class="text-[10px] md:text-xs text-gray-500 font-mono">WIS: HIGH / LCK: MED</p>
                         <div class="game-select-text text-[10px] bg-yellow-600 text-white inline-block px-2 py-1 rounded mt-3">PRESS START</div>
                     </div>
                 </button>
 
                 <!-- 4. Speaker -->
-                <button onclick="app.selectCharacter(this, 'speaker')" data-role="speaker" class="persona-card p-8 text-left group fade-in-up flex flex-col h-full rounded-xl" style="animation-delay: 0.5s;">
+                <button onclick="app.selectCharacter(this, 'speaker')" data-role="speaker" class="persona-card p-6 md:p-8 text-left group fade-in-up flex flex-col h-full rounded-xl" style="animation-delay: 0.5s;">
                     <div class="p1-indicator">P1</div>
-                    <div class="icon-wrapper flex justify-center items-center h-32 mb-6 border-2 border-dashed border-gray-100 rounded-2xl group-hover:border-transparent transition-all">
-                        <i data-lucide="mic" class="w-16 h-16 text-gray-300 group-hover:text-red-500 transition-all group-hover:scale-110"></i>
+                    <div class="icon-wrapper flex justify-center items-center h-24 md:h-32 mb-4 md:mb-6 border-2 border-dashed border-gray-100 rounded-2xl group-hover:border-transparent transition-all">
+                        <i data-lucide="mic" class="w-12 h-12 md:w-16 md:h-16 text-gray-300 group-hover:text-red-500 transition-all group-hover:scale-110"></i>
                     </div>
                     <div class="mt-auto text-center">
-                        <h3 class="pixel-font text-sm mb-2 leading-relaxed text-gray-900 group-hover:text-red-600">SPEAKER</h3>
+                        <h3 class="pixel-font text-xs md:text-sm mb-2 leading-relaxed text-gray-900 group-hover:text-red-600">SPEAKER</h3>
                         <div class="flex justify-center gap-1 mb-4">
                             <div class="w-2 h-4 bg-red-500"></div><div class="w-2 h-4 bg-red-500"></div><div class="w-2 h-4 bg-red-500"></div><div class="w-2 h-4 bg-gray-200"></div>
                         </div>
-                        <p class="text-xs text-gray-500 font-mono">SPE: HIGH / DEF: LOW</p>
+                        <p class="text-[10px] md:text-xs text-gray-500 font-mono">SPE: HIGH / DEF: LOW</p>
                         <div class="game-select-text text-[10px] bg-red-600 text-white inline-block px-2 py-1 rounded mt-3">PRESS START</div>
                     </div>
                 </button>
 
             </div>
             
-            <!-- Floating Mini Game -->
-            <div id="floating-game-card" class="fade-in-up hidden md:flex" style="animation-delay: 0.6s;">
-                <div class="relative flex-1 overflow-hidden h-full bg-white">
-                    <canvas id="mini-game-canvas"></canvas>
-                    <div class="absolute top-2 left-3 text-[10px] font-mono text-gray-400 pointer-events-none tracking-widest">SYSTEM.NODE.UPLINK</div>
-                </div>
-                <!-- Control Text Footer -->
-                <div class="bg-gray-50 border-t border-gray-200 px-4 py-3 flex justify-between items-center text-[10px] font-mono text-gray-500 uppercase tracking-wide">
-                    <span>Proximity Sensor: ON</span>
-                    <span class="flex items-center gap-2">
-                        <span class="text-black font-bold" id="node-count">0 Nodes</span>
-                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    </span>
-                </div>
-            </div>
-
-            <div class="mt-6 text-xs text-gray-400 font-mono opacity-60">
+            <div class="mt-4 md:mt-6 text-[10px] md:text-xs text-gray-400 font-mono opacity-60">
                 CREDITS: 01 &bull; HIGH SCORE: 99999
             </div>
         </div>
@@ -410,16 +344,16 @@
     <div id="wiki-layout" class="hide flex flex-col min-h-screen transition-opacity duration-500 opacity-0 bg-white">
         
         <!-- Navigation -->
-        <nav class="py-4 px-6 md:px-10 flex items-center justify-between sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-transparent">
+        <nav class="py-3 px-4 md:py-4 md:px-10 flex items-center justify-between sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-transparent">
             
             <!-- Left Side: Back Button + Branding -->
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 md:gap-4">
                 <button onclick="app.goHome()" class="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors group" title="Change Character">
                     <i data-lucide="arrow-left" class="w-5 h-5 text-gray-500 group-hover:text-black"></i>
                 </button>
-                <div class="flex items-center gap-3 cursor-pointer" onclick="app.goHome()">
+                <div class="flex items-center gap-2 md:gap-3 cursor-pointer" onclick="app.goHome()">
                     <div class="w-8 h-8 bg-black rounded-full flex items-center justify-center text-white font-bold text-sm">V</div>
-                    <div class="hidden md:block font-bold text-lg tracking-tight">Vansham</div>
+                    <div class="font-bold text-lg tracking-tight">Vansham</div>
                 </div>
             </div>
             
@@ -431,14 +365,14 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <button class="bg-black text-white px-5 py-2.5 rounded-full text-xs font-bold hover:bg-gray-800 transition-all shadow-lg shadow-black/10">Contact</button>
+                <button class="bg-black text-white px-4 py-2 md:px-5 md:py-2.5 rounded-full text-xs font-bold hover:bg-gray-800 transition-all shadow-lg shadow-black/10">Contact</button>
             </div>
         </nav>
 
         <!-- Main Content -->
         <div class="flex flex-col md:flex-row flex-1 max-w-[1400px] mx-auto w-full relative">
 
-            <!-- Sidebar -->
+            <!-- Sidebar (Desktop Only) -->
             <aside class="w-full md:w-56 lg:w-64 p-8 hidden md:block sticky top-20 h-[calc(100vh-80px)] overflow-y-auto">
                 <div class="font-bold text-black mb-6 text-xs uppercase tracking-widest opacity-40">Quick Index</div>
                 <ul class="space-y-2 text-sm font-medium text-gray-500" id="sidebar-nav">
@@ -463,22 +397,32 @@
             <!-- Dynamic Center Content -->
             <main class="flex-1 p-6 md:p-12 min-w-0" id="main-content">
                 
+                <!-- Mobile Quick Links (Pinned & Compact) -->
+                <!-- UPDATED: Sticky positioning and better spacing -->
+                <div class="md:hidden sticky top-[60px] z-30 bg-white/95 backdrop-blur border-b border-gray-100 py-3 -mx-6 px-6 mb-8 flex items-center gap-2 overflow-x-auto scrollbar-hide mask-fade-right">
+                    <span class="text-[10px] font-bold text-gray-400 uppercase whitespace-nowrap mr-1">Jump To</span>
+                    <a href="#biography" class="bg-white px-3 py-1.5 rounded-full border border-gray-200 text-xs font-medium whitespace-nowrap hover:border-black transition-colors shadow-sm">Biography</a>
+                    <a href="#projects" class="bg-white px-3 py-1.5 rounded-full border border-gray-200 text-xs font-medium whitespace-nowrap hover:border-black transition-colors shadow-sm">Work</a>
+                    <a href="#references" class="bg-white px-3 py-1.5 rounded-full border border-gray-200 text-xs font-medium whitespace-nowrap hover:border-black transition-colors shadow-sm">Refs</a>
+                    <a href="#profile-info" class="bg-white px-3 py-1.5 rounded-full border border-gray-200 text-xs font-medium whitespace-nowrap hover:border-black transition-colors shadow-sm">Profile</a>
+                </div>
+
                 <!-- Header -->
                 <div class="pb-8 mb-12 border-b border-gray-100 fade-in-up">
                     <h1 class="wiki-header-title text-black mb-2" id="page-title">Product<br>Designer.</h1>
-                    <div class="flex items-center gap-4 mt-6">
-                        <div class="flex gap-2" id="header-tags">
+                    <div class="flex items-center flex-wrap gap-4 mt-6">
+                        <div class="flex flex-wrap gap-2" id="header-tags">
                              <!-- JS Injected Tags -->
                         </div>
-                        <div class="h-px flex-1 bg-gray-100"></div>
-                        <div class="text-xs text-gray-400 flex items-center gap-1">
+                        <div class="h-px flex-1 bg-gray-100 hidden md:block"></div>
+                        <div class="text-xs text-gray-400 flex items-center gap-1 ml-auto md:ml-0">
                             <i data-lucide="globe" class="w-3 h-3"></i> EN
                         </div>
                     </div>
                 </div>
 
                 <!-- Intro -->
-                <section id="intro" class="mb-16 text-xl md:text-2xl leading-relaxed text-gray-800 font-light fade-in-up" style="animation-delay: 0.1s">
+                <section id="intro" class="mb-16 text-lg md:text-2xl leading-relaxed text-gray-800 font-light fade-in-up" style="animation-delay: 0.1s">
                     <div id="intro-content">
                         <!-- JS Injected Intro -->
                     </div>
@@ -487,7 +431,7 @@
                 <!-- Biography -->
                 <section id="biography" class="mb-20 fade-in-up" style="animation-delay: 0.2s">
                     <div class="flex items-center justify-between mb-8">
-                        <h2 class="text-3xl font-bold">Biography</h2>
+                        <h2 class="text-2xl md:text-3xl font-bold">Biography</h2>
                         <button class="text-xs font-bold border-b border-black pb-0.5 opacity-50">Edit Section</button>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="bio-grid">
@@ -498,7 +442,7 @@
                 <!-- Works -->
                 <section id="projects" class="mb-20 fade-in-up" style="animation-delay: 0.3s">
                     <div class="flex items-center justify-between mb-10">
-                        <h2 class="text-3xl font-bold" id="section-work-title">Selected Works</h2>
+                        <h2 class="text-2xl md:text-3xl font-bold" id="section-work-title">Selected Works</h2>
                         <span class="text-sm text-gray-400">2021 — 2024</span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="projects-grid">
@@ -509,7 +453,7 @@
                 <!-- References -->
                 <section id="references" class="mb-12 fade-in-up" style="animation-delay: 0.4s">
                     <h2 class="text-2xl font-bold mb-8">References</h2>
-                    <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100" id="references-box">
+                    <div class="bg-gray-50 rounded-2xl p-6 md:p-8 border border-gray-100" id="references-box">
                         <!-- JS Injected References -->
                     </div>
                 </section>
@@ -517,8 +461,8 @@
             </main>
 
             <!-- Right InfoBox -->
-            <aside class="w-full md:w-80 lg:w-96 p-6 md:pr-10">
-                <div class="infobox w-full fade-in-up sticky top-24" style="animation-delay: 0.2s">
+            <aside class="w-full md:w-80 lg:w-96 p-6 md:pr-10 order-last md:order-none" id="profile-info">
+                <div class="infobox w-full fade-in-up md:sticky md:top-24" style="animation-delay: 0.2s">
                     <div id="canvas-container" class="relative group" title="Interact with me!">
                         <div class="absolute top-4 left-4 z-10 pointer-events-none">
                              <span class="bg-white/80 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-gray-200">Interactive</span>
@@ -541,22 +485,71 @@
         </div>
 
         <!-- Footer -->
-        <footer class="bg-[#111] text-white py-20 px-6 mt-12">
-            <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-end gap-10">
+        <footer class="bg-[#111] text-white py-12 md:py-20 px-6 mt-12">
+            <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-start md:items-end gap-10">
                 <div>
-                    <h2 class="text-5xl md:text-7xl font-bold tracking-tighter mb-6">Let's Connect<br>There.</h2>
+                    <h2 class="text-4xl md:text-7xl font-bold tracking-tighter mb-6">Let's Connect<br>There.</h2>
                     <div class="flex flex-wrap gap-4">
-                        <a href="#" class="px-6 py-3 border border-white/20 rounded-full hover:bg-white hover:text-black transition-all">LinkedIn</a>
-                        <a href="#" class="px-6 py-3 border border-white/20 rounded-full hover:bg-white hover:text-black transition-all">Twitter</a>
-                        <a href="#" class="px-6 py-3 bg-white text-black rounded-full font-bold hover:scale-105 transition-transform">Email Me</a>
+                        <a href="#" class="px-6 py-3 border border-white/20 rounded-full hover:bg-white hover:text-black transition-all text-sm md:text-base">LinkedIn</a>
+                        <a href="#" class="px-6 py-3 border border-white/20 rounded-full hover:bg-white hover:text-black transition-all text-sm md:text-base">Twitter</a>
+                        <a href="#" class="px-6 py-3 bg-white text-black rounded-full font-bold hover:scale-105 transition-transform text-sm md:text-base">Email Me</a>
                     </div>
                 </div>
-                <div class="text-right text-gray-500 text-sm">
+                <div class="text-left md:text-right text-gray-500 text-sm w-full md:w-auto border-t md:border-t-0 border-gray-800 pt-6 md:pt-0">
                     <p class="mb-2">Based in India.</p>
                     <p>&copy; 2025 Vansham.</p>
                 </div>
             </div>
         </footer>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- MODAL (Project Details) -->
+    <!-- ========================================= -->
+    <div id="project-modal" class="fixed inset-0 z-[60] hide flex items-center justify-center p-4">
+        <div class="absolute inset-0" onclick="app.closeModal()"></div>
+        <div class="modal-content bg-white w-full max-w-4xl h-[85vh] rounded-[2rem] shadow-2xl relative flex flex-col overflow-hidden border border-gray-200">
+            
+            <!-- Close Button -->
+            <button onclick="app.closeModal()" class="absolute top-4 right-4 z-10 w-10 h-10 bg-white/50 hover:bg-white backdrop-blur rounded-full flex items-center justify-center border border-gray-200 transition-all">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Modal Content (Scrollable) -->
+            <div class="overflow-y-auto flex-1 custom-scrollbar">
+                <!-- Image Header -->
+                <div class="h-64 md:h-80 bg-gray-200 relative">
+                    <img id="modal-img" src="" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
+                        <div>
+                            <div class="flex gap-2 mb-3">
+                                <span id="modal-tag" class="bg-white text-black px-3 py-1 rounded-full text-xs font-bold">Tag</span>
+                                <span id="modal-year" class="bg-black/50 text-white backdrop-blur px-3 py-1 rounded-full text-xs font-bold border border-white/20">Year</span>
+                            </div>
+                            <h2 id="modal-title" class="text-4xl md:text-5xl font-bold text-white tracking-tight">Title</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Body -->
+                <div class="p-8 md:p-12">
+                    <div class="max-w-3xl mx-auto">
+                        <p id="modal-desc" class="text-xl text-gray-800 font-medium mb-10 leading-relaxed">Description goes here.</p>
+                        
+                        <!-- Dynamic content container -->
+                        <div id="modal-body-content" class="prose prose-lg text-gray-600">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-gray-100 bg-white flex justify-between items-center">
+                <span class="text-xs text-gray-400 font-mono">CASE STUDY #001</span>
+                <button class="bg-black text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-gray-800">View Live Project</button>
+            </div>
+        </div>
     </div>
 
     <!-- AUDIO LOGIC -->
@@ -566,6 +559,7 @@
             masterGain: null,
             bgOsc: [],
             isPlaying: false,
+            melodyInterval: null,
 
             init: function() {
                 if(this.ctx) return;
@@ -589,12 +583,17 @@
                 if(this.ctx.state === 'suspended') {
                     this.ctx.resume();
                     this.isPlaying = true;
+                    // Restart melody interval if needed
+                    if(!this.melodyInterval) this.playAmbience();
                 } else if(this.isPlaying) {
                     this.masterGain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.5);
                     this.isPlaying = false;
+                    clearInterval(this.melodyInterval);
+                    this.melodyInterval = null;
                 } else {
                     this.masterGain.gain.exponentialRampToValueAtTime(0.3, this.ctx.currentTime + 0.5);
                     this.isPlaying = true;
+                    if(!this.melodyInterval) this.playAmbience();
                 }
                 this.updateIcon();
             },
@@ -622,12 +621,12 @@
                 osc.connect(gain);
                 gain.connect(this.masterGain);
 
-                // Standard Click - Crisp and Short
+                // Louder, crisper click
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(600, this.ctx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.05);
                 
-                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.setValueAtTime(0.4, this.ctx.currentTime); 
                 gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
 
                 osc.start();
@@ -642,12 +641,11 @@
                 osc.connect(gain);
                 gain.connect(this.masterGain);
 
-                // Power Up / Select Sound (Rapid Frequency Sweep)
                 osc.type = 'square';
                 osc.frequency.setValueAtTime(200, this.ctx.currentTime);
                 osc.frequency.linearRampToValueAtTime(800, this.ctx.currentTime + 0.1);
                 
-                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime); 
                 gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.2);
 
                 osc.start();
@@ -655,42 +653,78 @@
             },
 
             playAmbience: function() {
-                // Inspirational Pentatonic Pad (Warm Triangle Waves)
-                const freqs = [196.00, 261.63, 293.66, 329.63, 392.00]; // G3, C4, D4, E4, G4 (C Major Pentatonic)
-                freqs.forEach((f, i) => {
+                // Sweet Ambient Pad (C Major 9)
+                // C3, E3, G3, B3, D4
+                const padNotes = [130.81, 164.81, 196.00, 246.94, 293.66]; 
+                this.bgOsc = []; // Ensure we track them
+                
+                padNotes.forEach(f => {
                     const osc = this.ctx.createOscillator();
                     const gain = this.ctx.createGain();
+                    
                     osc.connect(gain);
                     gain.connect(this.masterGain);
                     
-                    osc.type = 'triangle'; // Softer, warmer sound
+                    osc.type = 'sine'; // Sine is sweetest
                     osc.frequency.value = f;
                     
-                    // Slight detune for analog feel
-                    osc.detune.value = (Math.random() - 0.5) * 5;
+                    // Slight detune for richness
+                    osc.detune.value = (Math.random() - 0.5) * 4;
 
-                    // LFO for slow movement
+                    // LFO for breathing effect
                     const lfo = this.ctx.createOscillator();
-                    lfo.frequency.value = 0.05 + Math.random() * 0.1;
+                    lfo.frequency.value = 0.1 + Math.random() * 0.1; // Slow breath
                     const lfoGain = this.ctx.createGain();
-                    lfoGain.gain.value = 0.03;
+                    lfoGain.gain.value = 0.02; // Depth
                     lfo.connect(lfoGain);
                     lfoGain.connect(gain.gain);
                     lfo.start();
 
-                    gain.gain.value = 0.02; // Very quiet background
+                    gain.gain.value = 0.03; // Low volume base
+                    
                     osc.start();
-                    this.bgOsc.push(osc);
+                    this.bgOsc.push(osc); 
                 });
+
+                // Start Melody Loop
+                if(this.melodyInterval) clearInterval(this.melodyInterval);
+                this.melodyInterval = setInterval(() => {
+                    if(!this.isPlaying) return;
+                    this.playSweetNote();
+                }, 2000 + Math.random() * 3000); // Slower, more spaced out
+            },
+
+            playSweetNote: function() {
+                if(!this.ctx) return;
+                // Pentatonic Major (C5 - C7 range) - High and sparkly
+                const scale = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50]; 
+                const note = scale[Math.floor(Math.random() * scale.length)];
+                
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(this.masterGain);
+                
+                osc.type = 'sine';
+                osc.frequency.value = note;
+                
+                const now = this.ctx.currentTime;
+                
+                // Bell-like Envelope
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.1, now + 0.1); // Soft attack
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 4.0); // Long tail
+                
+                osc.start(now);
+                osc.stop(now + 4.0);
             }
         };
 
-        // Attach click listener to whole document to init audio
         document.addEventListener('click', () => {
             if(!audioManager.ctx) audioManager.init();
         }, { once: true });
 
-        // Add Play Sound to Buttons
         document.querySelectorAll('button, .sidebar-link').forEach(el => {
             el.addEventListener('click', () => audioManager.playClick());
         });
@@ -702,77 +736,182 @@
         // Data Store
         const DATA = {
             designer: {
-                title: "Product<br>Designer.",
-                tags: ["UI/UX", "Product", "Systems"],
-                status: "Open to work",
+                title: "UI/UX &<br>Graphic Designer.",
+                tags: ["Social Media", "UI/UX", "Figma"],
+                status: "Designing",
                 workLabel: "Selected Works",
-                intro: `<p class="mb-6"><span class="font-semibold text-black">Vansham</span> is an Indian product designer who creates intuitive digital experiences.</p><p class="text-base text-gray-500 leading-loose max-w-2xl">Merging the structural clarity of encyclopedic knowledge with modern aesthetics. His work focuses on bridging the gap between functional utility and visual storytelling.</p>`,
+                intro: `<p class="mb-6"><span class="font-semibold text-black">Vansham</span> is a B.Tech CSE Core student at ITM SLS Baroda University who bridges the gap between code and design.</p><p class="text-base text-gray-500 leading-loose max-w-2xl">With over 2-3 years of experience in designing social media posts and exploring UI/UX, he creates visually engaging digital experiences using Figma, Photoshop, React, and Tailwind.</p>`,
                 bio: [
-                    { icon: "graduation-cap", title: "Education", text: "B.Des in Interaction Design from NID. Specialized in Human-Computer Interaction." },
-                    { icon: "layers", title: "Stack", text: "Figma, Prototyping, Design Systems. Comfortable with React & Tailwind." }
+                    { icon: "graduation-cap", title: "Education", text: "B.Tech in CSE Core, ITM SLS Baroda University." },
+                    { icon: "layers", title: "Stack", text: "Figma, Photoshop, React, Tailwind CSS." }
                 ],
                 projects: [
-                    { id: 1, title: "Fintech Dashboard", tag: "Fintech", year: "2023", desc: "Overhauling a banking interface to improve transaction clarity and user retention.", img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800" },
-                    { id: 2, title: "Project Orbit", tag: "SaaS", year: "2022", desc: "Collaborative workspace tool for remote teams featuring real-time editing.", img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800" },
-                    { id: 3, title: "HealthPlus Mobile", tag: "Health", year: "2024", desc: "Patient-first mobile application connecting users with local specialists.", img: "https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&q=80&w=800" },
-                    { title: "Collaboration", tag: "Future", year: "Next", desc: "Ready to start a new project? I am open to new opportunities.", isPlaceholder: true }
+                    { 
+                        id: 1, 
+                        title: "Social Media Campaigns", 
+                        tag: "Design", 
+                        year: "2021-24", 
+                        desc: "Designed engaging social media assets for various events and communities over the last 3 years.", 
+                        img: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=800",
+                        details: `
+                            <h3 class="text-black font-bold text-2xl mb-4">The Challenge</h3>
+                            <p class="mb-6">Creating a consistent brand voice across multiple social media platforms for diverse community events. The goal was to increase engagement and event turnout through visually compelling storytelling.</p>
+                            <h3 class="text-black font-bold text-2xl mb-4">The Approach</h3>
+                            <p class="mb-6">Utilized a combination of bold typography and vibrant color palettes in Figma and Photoshop. Established scalable templates to ensure rapid turnaround times for event announcements without compromising quality.</p>
+                            <h3 class="text-black font-bold text-2xl mb-4">The Impact</h3>
+                            <p>Significant increase in social media impressions and higher attendance rates for community meetups and tech events.</p>
+                        `
+                    },
+                    { 
+                        id: 2, 
+                        title: "UI/UX Exploration", 
+                        tag: "Figma", 
+                        year: "2023", 
+                        desc: "Restarted the UI/UX journey with a focus on user-centric product design.", 
+                        img: "https://images.unsplash.com/photo-1586717791821-3f44a5638d0f?auto=format&fit=crop&q=80&w=800",
+                        details: `
+                            <h3 class="text-black font-bold text-2xl mb-4">The Vision</h3>
+                            <p class="mb-6">To deeply understand user behavior and translate it into intuitive interfaces. This exploration involved dissecting popular apps, creating wireframes, and prototyping interactive flows.</p>
+                            <h3 class="text-black font-bold text-2xl mb-4">Key Learnings</h3>
+                            <p class="mb-6">Mastered auto-layout in Figma, component libraries, and the importance of accessibility in modern web design.</p>
+                        `
+                    },
+                    { title: "Product Designing Projects", tag: "Loading", year: "Soon", desc: "Exciting new product design projects are in the pipeline. Stay tuned!", isPlaceholder: true }
                 ],
-                role: "Product & UI Designer",
-                stats: [{l:"EXP",v:"4+ Years"}, {l:"TOOLS",v:["Figma","Spline"]}],
+                role: "Designer & Developer",
+                stats: [{l:"EXP",v:"3 Years"}, {l:"TOOLS",v:["Figma","PS","React"]}],
                 shape: "torus"
             },
             community: {
-                title: "Community<br>Manager.",
-                tags: ["Growth", "Events", "Discord"],
-                status: "Building Tribes",
+                title: "Community<br>Founder.",
+                tags: ["Techies", "Hackers Meetup", "AWS"],
+                status: "Building Communities",
                 workLabel: "Community Initiatives",
-                intro: `<p class="mb-6"><span class="font-semibold text-black">Vansham</span> is a community builder who connects people through shared passions.</p><p class="text-base text-gray-500 leading-loose max-w-2xl">Expert in scaling discord servers, organizing hackathons, and fostering engagement. He believes in the power of 'Community-Led Growth'.</p>`,
+                intro: `<p class="mb-6"><span class="font-semibold text-black">Vansham</span> is the Founder of 'Techies Community', focused on elevating student-led startups and projects.</p><p class="text-base text-gray-500 leading-loose max-w-2xl">He leads 'The Hackers Meetup - Vadodara Chapter' and has been a key volunteer for AWS User Group Vadodara and GDG ITMBU, managing large-scale events and audience engagement.</p>`,
                 bio: [
-                    { icon: "users", title: "Experience", text: "Managed communities of 50k+ members for Web3 and EdTech startups." },
-                    { icon: "mic", title: "Events", text: "Hosted 100+ AMAs, Twitter Spaces, and IRL meetups across India." }
+                    { icon: "users", title: "Leadership", text: "Founder of Techies Community. Lead at The Hackers Meetup Vadodara." },
+                    { icon: "mic", title: "Volunteering", text: "Ex-Creative Head GDG ITMBU (2024-25). Volunteer at AWS User Group Vadodara." }
                 ],
                 projects: [
-                    { id: 4, title: "Designers Guild", tag: "Discord", year: "2023", desc: "Grew a design community from 0 to 10k members in 6 months.", img: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=800" },
-                    { id: 5, title: "TechWeek", tag: "Event", year: "2024", desc: "Organized a 3-day hackathon with 500+ participants.", img: "https://images.unsplash.com/photo-1540575467063-178a509a24fc?auto=format&fit=crop&q=80&w=800" }
+                    { 
+                        id: 4, 
+                        title: "Techies Community", 
+                        tag: "Founder", 
+                        year: "2024", 
+                        desc: "Building a community to support student startups and elevate student-led projects.", 
+                        img: "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&q=80&w=800",
+                        details: `
+                            <h3 class="text-black font-bold text-2xl mb-4">The Mission</h3>
+                            <p class="mb-6">To bridge the gap between student innovation and real-world startup ecosystems. Techies Community serves as a launchpad for student-led projects.</p>
+                            <h3 class="text-black font-bold text-2xl mb-4">Activities</h3>
+                            <p class="mb-6">Organizing hackathons, pitch sessions, and networking events connecting students with industry mentors.</p>
+                        `
+                    },
+                    { 
+                        id: 5, 
+                        title: "AWS Community Day", 
+                        tag: "Volunteer", 
+                        year: "2023", 
+                        desc: "Managed Event Management & Social Media teams for AWS Community Day Vadodara events.", 
+                        img: "https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&w=800",
+                        details: `
+                            <h3 class="text-black font-bold text-2xl mb-4">The Role</h3>
+                            <p class="mb-6">Played a pivotal role in the organizing team for AWS Community Day Vadodara. Initially handled event logistics and later transitioned to leading the social media strategy.</p>
+                            <h3 class="text-black font-bold text-2xl mb-4">Outcome</h3>
+                            <p class="mb-6">Successfully executed two major events, managing guest speakers, volunteers, and ensuring a seamless experience for hundreds of attendees.</p>
+                        `
+                    }
                 ],
-                role: "Community Lead",
-                stats: [{l:"MEMBERS",v:"50k+"}, {l:"SKILLS",v:["Discord","Luma"]}],
+                role: "Community Leader",
+                stats: [{l:"EVENTS",v:"Large Scale"}, {l:"ROLES",v:["Founder","Lead"]}],
                 shape: "sphere"
             },
             mentor: {
-                title: "Design<br>Mentor.",
-                tags: ["Education", "Guidance", "Review"],
-                status: "Accepting Mentees",
+                title: "Student<br>Mentor.",
+                tags: ["Technolab", "Guidance", "Workshops"],
+                status: "Guiding Juniors",
                 workLabel: "Mentorship",
-                intro: `<p class="mb-6"><span class="font-semibold text-black">Vansham</span> is an educator dedicated to helping early-career designers navigate the industry.</p><p class="text-base text-gray-500 leading-loose max-w-2xl">Through 1:1 sessions and portfolio reviews, he has guided over 200+ students into their first design roles.</p>`,
+                intro: `<p class="mb-6"><span class="font-semibold text-black">Vansham</span> mentors juniors at the 'Technolab Club' in ITMBU, guiding them in development and design.</p><p class="text-base text-gray-500 leading-loose max-w-2xl">He has conducted over 20-30 workshops to engage with juniors and guide them on how to grow effectively during their B.Tech journey.</p>`,
                 bio: [
-                    { icon: "heart", title: "Impact", text: "Top 1% Mentor on ADPList. Helped students land jobs at Unicorns." },
-                    { icon: "book-open", title: "Workshops", text: "Conducted 20+ workshops on 'Design Systems' and 'Auto Layout'." }
+                    { icon: "heart", title: "Impact", text: "Many students started designing and development under his guidance." },
+                    { icon: "book-open", title: "Workshops", text: "Conducted 20-30 workshops for juniors on tech and career growth." }
                 ],
                 projects: [
-                    { id: 6, title: "UX Bootcamp", tag: "Course", year: "2023", desc: "A 4-week cohort based course teaching the fundamentals of UX.", img: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800" },
-                    { id: 7, title: "Portfolio Review", tag: "Live", year: "Ongoing", desc: "Weekly live streams reviewing junior portfolios.", img: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800" }
+                    { 
+                        id: 6, 
+                        title: "Technolab Mentorship", 
+                        tag: "Mentor", 
+                        year: "Ongoing", 
+                        desc: "Mentoring students in the Technolab Club at ITMBU.", 
+                        img: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800",
+                        details: `
+                            <h3 class="text-black font-bold text-2xl mb-4">Focus Area</h3>
+                            <p class="mb-6">Provide hands-on guidance in web development and UI/UX design to junior students. Helping them navigate the early stages of their technical education.</p>
+                            <h3 class="text-black font-bold text-2xl mb-4">Result</h3>
+                            <p class="mb-6">Fostered a culture of peer learning where mentees have gone on to build their own projects and contribute to the community.</p>
+                        `
+                    },
+                    { 
+                        id: 7, 
+                        title: "Junior Workshops", 
+                        tag: "Speaker", 
+                        year: "2023-24", 
+                        desc: "Conducted 30+ workshops to guide juniors on B.Tech growth.", 
+                        img: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&q=80&w=800",
+                        details: `
+                            <h3 class="text-black font-bold text-2xl mb-4">Workshop Series</h3>
+                            <p class="mb-6">A comprehensive series of over 20-30 sessions covering topics from basic programming to career roadmaps in tech.</p>
+                            <h3 class="text-black font-bold text-2xl mb-4">Objective</h3>
+                            <p class="mb-6">To engage students early in their degree, providing them with the resources and mentorship needed to succeed in the tech industry.</p>
+                        `
+                    }
                 ],
-                role: "Design Educator",
-                stats: [{l:"STUDENTS",v:"200+"}, {l:"PLATFORM",v:["ADPList","Topmate"]}],
+                role: "Student Mentor",
+                stats: [{l:"WORKSHOPS",v:"30+"}, {l:"FOCUS",v:["Design","Dev"]}],
                 shape: "cone"
             },
             speaker: {
                 title: "Public<br>Speaker.",
-                tags: ["Keynotes", "Podcasts", "Panels"],
-                status: "Available for Talks",
-                workLabel: "Talks & Media",
-                intro: `<p class="mb-6"><span class="font-semibold text-black">Vansham</span> shares insights on design ethics and future tech.</p><p class="text-base text-gray-500 leading-loose max-w-2xl">A regular voice at tech conferences and design podcasts, aiming to demystify complex UX concepts for broader audiences.</p>`,
+                tags: ["Panels", "Tech Talks", "Orientation"],
+                status: "Speaking",
+                workLabel: "Talks & Panels",
+                intro: `<p class="mb-6"><span class="font-semibold text-black">Vansham</span> is an active speaker in the student community, sharing insights on tech topics and career development.</p><p class="text-base text-gray-500 leading-loose max-w-2xl">He was invited as a panelist for the junior orientation discussion and regularly speaks at workshops to inspire the next batch of engineers.</p>`,
                 bio: [
-                    { icon: "mic-2", title: "Stages", text: "Spoke at React India, DesignUp, and local TEDx events." },
-                    { icon: "radio", title: "Podcast", text: "Host of 'The Design Loop', featuring interviews with industry leaders." }
+                    { icon: "mic-2", title: "Panels", text: "Invited member for panel discussion at Junior Orientation." },
+                    { icon: "radio", title: "Workshops", text: "Speaker at multiple workshops held for juniors about tech topics." }
                 ],
                 projects: [
-                    { id: 8, title: "React India", tag: "Talk", year: "2023", desc: "Keynote on 'Bridging the Gap between Design and Code'.", img: "https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&w=800" },
-                    { id: 9, title: "Design Loop", tag: "Podcast", year: "2024", desc: "Interview with the VP of Design at Cred.", img: "https://images.unsplash.com/photo-1478737270239-2f02b77ac6d5?auto=format&fit=crop&q=80&w=800" }
+                    { 
+                        id: 8, 
+                        title: "Orientation Panel", 
+                        tag: "Panelist", 
+                        year: "2024", 
+                        desc: "Panel discussion member for the orientation of new juniors.", 
+                        img: "https://images.unsplash.com/photo-1475721027760-4468f4c49483?auto=format&fit=crop&q=80&w=800",
+                        details: `
+                            <h3 class="text-black font-bold text-2xl mb-4">The Event</h3>
+                            <p class="mb-6">Invited as a key panel member during the orientation program for incoming B.Tech students.</p>
+                            <h3 class="text-black font-bold text-2xl mb-4">Discussion</h3>
+                            <p class="mb-6">Shared personal experiences, challenges, and strategies for making the most out of college life, balancing academics with skill development.</p>
+                        `
+                    },
+                    { 
+                        id: 9, 
+                        title: "Tech Workshops", 
+                        tag: "Speaker", 
+                        year: "Ongoing", 
+                        desc: "Delivering sessions on various technology topics for students.", 
+                        img: "https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&w=800",
+                        details: `
+                            <h3 class="text-black font-bold text-2xl mb-4">Topics Covered</h3>
+                            <p class="mb-6">Ranging from introduction to cloud computing (AWS) to design principles and community building.</p>
+                            <h3 class="text-black font-bold text-2xl mb-4">Goal</h3>
+                            <p class="mb-6">To demystify complex tech concepts and inspire students to start their own learning journeys.</p>
+                        `
+                    }
                 ],
-                role: "Keynote Speaker",
-                stats: [{l:"TALKS",v:"15+"}, {l:"TOPICS",v:["UX","AI"]}],
+                role: "Public Speaker",
+                stats: [{l:"TALKS",v:"Multiple"}, {l:"TYPE",v:["Panel","Workshop"]}],
                 shape: "icosahedron"
             }
         };
@@ -810,8 +949,15 @@
                 document.getElementById('page-title').innerHTML = data.title;
                 document.getElementById('intro-content').innerHTML = data.intro;
                 document.getElementById('status-pill').textContent = data.status;
-                document.getElementById('sidebar-work-label').textContent = data.workLabel;
-                document.getElementById('section-work-title').textContent = data.workLabel;
+                
+                // Note: on mobile sidebar is hidden, we rely on the main content nav.
+                // But we still update these just in case or for tablet layout.
+                const sidebarLabel = document.getElementById('sidebar-work-label');
+                if (sidebarLabel) sidebarLabel.textContent = data.workLabel;
+                
+                const sectionWorkTitle = document.getElementById('section-work-title');
+                if (sectionWorkTitle) sectionWorkTitle.textContent = data.workLabel;
+                
                 document.getElementById('info-role').textContent = data.role;
 
                 document.getElementById('header-tags').innerHTML = data.tags.map(t => 
@@ -819,7 +965,7 @@
                 ).join('');
 
                 document.getElementById('bio-grid').innerHTML = data.bio.map(b => `
-                    <div class="bg-gray-50 p-8 rounded-[2rem] hover:bg-gray-100 transition-colors">
+                    <div class="bg-gray-50 p-6 md:p-8 rounded-[2rem] hover:bg-gray-100 transition-colors">
                         <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm">
                             <i data-lucide="${b.icon}" class="w-5 h-5"></i>
                         </div>
@@ -831,18 +977,18 @@
                 document.getElementById('projects-grid').innerHTML = data.projects.map(p => {
                     if (p.isPlaceholder) {
                         return `
-                        <div class="project-card p-8 group cursor-pointer reveal-on-scroll is-visible bg-gray-100 flex flex-col items-center justify-center text-center">
-                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform">
-                                <i data-lucide="plus" class="w-8 h-8 text-gray-400"></i>
+                        <div class="project-card p-6 md:p-8 group cursor-pointer reveal-on-scroll is-visible bg-gray-100 flex flex-col items-center justify-center text-center">
+                            <div class="w-12 h-12 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center mb-4 md:mb-6 shadow-sm group-hover:scale-110 transition-transform">
+                                <i data-lucide="plus" class="w-6 h-6 md:w-8 md:h-8 text-gray-400"></i>
                             </div>
-                            <h3 class="text-2xl font-bold mb-2">Collaboration</h3>
-                            <p class="text-sm text-gray-500 mb-6 max-w-xs">Ready to start a new project? I am open to new opportunities.</p>
-                            <button class="bg-black text-white px-6 py-3 rounded-full text-sm font-bold">Contact Me</button>
+                            <h3 class="text-xl md:text-2xl font-bold mb-2">${p.title}</h3>
+                            <p class="text-xs md:text-sm text-gray-500 mb-4 md:mb-6 max-w-xs">${p.desc}</p>
+                            <button class="bg-black text-white px-6 py-3 rounded-full text-xs md:text-sm font-bold">Contact Me</button>
                         </div>`;
                     }
                     return `
-                    <div onclick="app.openModal('${type}', ${p.id})" class="project-card p-8 group cursor-pointer reveal-on-scroll is-visible">
-                        <div class="flex justify-between items-start mb-12">
+                    <div onclick="app.openModal('${type}', ${p.id})" class="project-card p-6 md:p-8 group cursor-pointer reveal-on-scroll is-visible">
+                        <div class="flex justify-between items-start mb-8 md:mb-12">
                             <div class="flex gap-2">
                                 <span class="pill-tag">${p.tag}</span>
                                 <span class="pill-tag">${p.year}</span>
@@ -850,10 +996,10 @@
                             <i data-lucide="arrow-up-right" class="w-6 h-6 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all"></i>
                         </div>
                         <div class="mb-4">
-                            <h3 class="text-2xl font-bold mb-2">${p.title}</h3>
-                            <p class="text-sm text-gray-500">${p.desc}</p>
+                            <h3 class="text-xl md:text-2xl font-bold mb-2">${p.title}</h3>
+                            <p class="text-xs md:text-sm text-gray-500">${p.desc}</p>
                         </div>
-                        <div class="w-full h-48 bg-gray-200 rounded-2xl overflow-hidden mt-6 relative">
+                        <div class="w-full h-40 md:h-48 bg-gray-200 rounded-2xl overflow-hidden mt-4 md:mt-6 relative">
                              <img src="${p.img}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105">
                         </div>
                     </div>`;
@@ -875,7 +1021,7 @@
                     <div class="space-y-6">
                         <div class="flex gap-4 items-start">
                             <span class="text-xs font-bold bg-black text-white px-2 py-1 rounded">1</span>
-                            <p class="text-sm text-gray-600 leading-relaxed">"Vansham brings energy and clarity to every ${type} role he takes on." — <span class="font-bold text-black">Sarah Jenkins</span>.</p>
+                            <p class="text-sm text-gray-600 leading-relaxed">"Vansham brings energy and clarity to every ${type} role he takes on." — <span class="font-bold text-black">Community Peer</span>.</p>
                         </div>
                     </div>
                 `;
@@ -900,11 +1046,25 @@
                 audioManager.playClick();
                 const project = DATA[type].projects.find(p => p.id === id);
                 if (!project) return;
+                
                 document.getElementById('modal-title').textContent = project.title;
                 document.getElementById('modal-desc').textContent = project.desc;
                 document.getElementById('modal-tag').textContent = project.tag;
                 document.getElementById('modal-year').textContent = project.year;
                 document.getElementById('modal-img').src = project.img;
+                
+                // NEW: Inject dynamic body content
+                const contentContainer = document.getElementById('modal-body-content');
+                if (project.details) {
+                    contentContainer.innerHTML = project.details;
+                } else {
+                    // Fallback content
+                    contentContainer.innerHTML = `
+                        <h3 class="text-black font-bold text-2xl mb-4">Overview</h3>
+                        <p class="mb-6">Detailed case study coming soon.</p>
+                    `;
+                }
+                
                 this.modal.classList.remove('hide');
             },
 
@@ -994,134 +1154,9 @@
             }
         };
 
-        const miniGame = {
-            canvas: null, ctx: null, nodes: [], mouse: {x: -1000, y: -1000}, cardRect: null,
-            maxNodes: 60,
-            
-            init: function() {
-                this.canvas = document.getElementById('mini-game-canvas');
-                if(!this.canvas) return;
-                this.ctx = this.canvas.getContext('2d');
-                
-                for(let i=0; i<20; i++) this.addNode();
-
-                const card = document.getElementById('floating-game-card');
-                card.addEventListener('mousemove', e => {
-                    this.cardRect = this.canvas.getBoundingClientRect();
-                    this.mouse.x = e.clientX - this.cardRect.left;
-                    this.mouse.y = e.clientY - this.cardRect.top;
-                });
-                card.addEventListener('mouseleave', () => { this.mouse.x = -1000; this.mouse.y = -1000; });
-
-                new ResizeObserver(() => this.resize()).observe(card);
-                this.resize();
-                
-                // Auto Spawn Stream
-                setInterval(() => this.spawnNode(), 800);
-                
-                this.animate();
-            },
-
-            addNode: function() {
-               this.nodes.push({
-                    x: Math.random() * this.canvas.width,
-                    y: Math.random() * this.canvas.height,
-                    vx: (Math.random() - 0.5) * 1.5,
-                    vy: (Math.random() - 0.5) * 1.5,
-                    size: Math.random() * 2 + 1
-                });
-            },
-
-            spawnNode: function() {
-                if (this.nodes.length >= this.maxNodes) return;
-                let x, y;
-                if (Math.random() > 0.5) {
-                    x = Math.random() > 0.5 ? 0 : this.canvas.width;
-                    y = Math.random() * this.canvas.height;
-                } else {
-                    x = Math.random() * this.canvas.width;
-                    y = Math.random() > 0.5 ? 0 : this.canvas.height;
-                }
-                this.nodes.push({ x: x, y: y, vx: (Math.random() - 0.5) * 1.5, vy: (Math.random() - 0.5) * 1.5, size: Math.random() * 2 + 1 });
-                
-                // Update counter
-                const countEl = document.getElementById('node-count');
-                if(countEl) countEl.innerText = `${this.nodes.length} Nodes`;
-            },
-
-            resize: function() {
-                if(!this.canvas) return;
-                const parent = this.canvas.parentElement;
-                this.canvas.width = parent.clientWidth;
-                this.canvas.height = parent.clientHeight;
-                this.cardRect = this.canvas.getBoundingClientRect();
-            },
-
-            animate: function() {
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                this.nodes.forEach(node => {
-                    // Friction
-                    node.vx *= 0.99;
-                    node.vy *= 0.99;
-                    
-                    // Min speed keep alive
-                    if(Math.abs(node.vx) < 0.2) node.vx += (Math.random()-0.5)*0.1;
-                    if(Math.abs(node.vy) < 0.2) node.vy += (Math.random()-0.5)*0.1;
-
-                    node.x += node.vx;
-                    node.y += node.vy;
-
-                    // Bounce
-                    if(node.x < 0 || node.x > this.canvas.width) node.vx *= -1;
-                    if(node.y < 0 || node.y > this.canvas.height) node.vy *= -1;
-
-                    // Mouse Interaction
-                    const dx = this.mouse.x - node.x;
-                    const dy = this.mouse.y - node.y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    
-                    // Reduced radius (80px) and friction based movement
-                    if(dist < 80) {
-                        node.x += dx * 0.03; 
-                        node.y += dy * 0.03;
-                        this.ctx.beginPath();
-                        this.ctx.moveTo(node.x, node.y);
-                        this.ctx.lineTo(this.mouse.x, this.mouse.y);
-                        this.ctx.strokeStyle = `rgba(0,0,0,${1 - dist/80})`;
-                        this.ctx.lineWidth = 0.5;
-                        this.ctx.stroke();
-                    }
-
-                    // Connections
-                    this.nodes.forEach(other => {
-                        const odx = other.x - node.x;
-                        const ody = other.y - node.y;
-                        const odist = Math.sqrt(odx*odx + ody*ody);
-                        if(odist < 50) {
-                            this.ctx.beginPath();
-                            this.ctx.moveTo(node.x, node.y);
-                            this.ctx.lineTo(other.x, other.y);
-                            this.ctx.strokeStyle = `rgba(0,0,0,${0.15 * (1 - odist/50)})`;
-                            this.ctx.lineWidth = 0.5;
-                            this.ctx.stroke();
-                        }
-                    });
-
-                    this.ctx.beginPath();
-                    this.ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
-                    this.ctx.fillStyle = '#000';
-                    this.ctx.fill();
-                });
-
-                requestAnimationFrame(this.animate.bind(this));
-            }
-        };
-
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             threeJS.init();
-            miniGame.init();
         });
     </script>
 </body>
